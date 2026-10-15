@@ -143,6 +143,10 @@ csp = ("default-src 'self'; script-src 'self' https://static.cloudflareinsights.
     '\nhttps://:version.:project.pages.dev/*\n'
     '  X-Robots-Tag: noindex\n' % csp)
 
+# short links for places a link can't be tapped (typed from a video, scanned from paper); each tags its channel
+SHORT = {'tiktok': 'utm_source=tiktok&utm_medium=social', 'flyer': 'utm_source=flyer&utm_medium=print'}
+(DIST / '_redirects').write_text(''.join('/%s /?%s 302\n/%s/ /?%s 302\n' % (k, v, k, v) for k, v in SHORT.items()))
+
 # ---------- checks ----------
 problems = []
 for f in DIST.rglob('*'):
