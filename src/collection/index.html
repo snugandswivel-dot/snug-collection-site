@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{HEAD}}
+<title>Six looks in 3D · The Snug Collection</title>
+<meta name="description" content="Turn all six Snug Collection covers for Apple HomeView in 3D: Blush Puff, Holly Bow and Oat Puff launch first; vote for Cocoa Kitty, Butter Wave or Pearl Bobbin next.">
+<link rel="canonical" href="{{ORIGIN}}/collection/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="The Snug Collection">
+<meta property="og:url" content="{{ORIGIN}}/collection/">
+<meta property="og:title" content="Six looks in 3D · The Snug Collection">
+<meta property="og:description" content="Six cozy covers for the new Apple HomeView. Spin them in 3D and vote on what we make next.">
+<meta property="og:image" content="{{ORIGIN}}/og-collection.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Six soft silicone frames: blush, holly red, oat, cocoa with cat ears, butter yellow and pearl-trimmed cream">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Six looks in 3D · The Snug Collection">
+<meta name="twitter:description" content="Six cozy covers for the new Apple HomeView. Spin them in 3D and vote on what we make next.">
+<meta name="twitter:image" content="{{ORIGIN}}/og-collection.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"CollectionPage","name":"Six looks in 3D","url":"{{ORIGIN}}/collection/","isPartOf":{"@type":"WebSite","name":"The Snug Collection","url":"{{ORIGIN}}/"},
+"mainEntity":{"@type":"ItemList","itemListElement":[
+{"@type":"ListItem","position":1,"name":"Blush Puff","url":"{{ORIGIN}}/collection/#blush"},
+{"@type":"ListItem","position":2,"name":"Holly Bow","url":"{{ORIGIN}}/collection/#holly"},
+{"@type":"ListItem","position":3,"name":"Oat Puff","url":"{{ORIGIN}}/collection/#oat"},
+{"@type":"ListItem","position":4,"name":"Cocoa Kitty","url":"{{ORIGIN}}/collection/#kitty"},
+{"@type":"ListItem","position":5,"name":"Butter Wave","url":"{{ORIGIN}}/collection/#butter"},
+{"@type":"ListItem","position":6,"name":"Pearl Bobbin","url":"{{ORIGIN}}/collection/#pearl"}]}}
+</script>
+<style>
+/* Layout: a one-screen fitting room under the header. Stage left with the look rail beneath it, the look's card on the right; stacks on phones. */
+@property --look{syntax:'<color>';inherits:true;initial-value:#D9A3A6}
+.room{--look:#D9A3A6;box-sizing:border-box;display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,390px);grid-template-rows:minmax(0,1fr) auto;grid-template-areas:"stage panel" "rail panel";gap:14px 20px;height:calc(100svh - 64px);min-height:620px;padding-block:16px 18px;transition:--look .7s ease}
+.stage{grid-area:stage;position:relative;isolation:isolate;min-height:0;border-radius:26px;overflow:hidden;border:1px solid var(--line);background:var(--bg2);background:radial-gradient(120% 95% at 50% 36%,color-mix(in oklab,var(--look) 32%,var(--bg2)) 0%,color-mix(in oklab,var(--look) 11%,var(--bg2)) 58%,var(--bg2) 100%);box-shadow:var(--shadow)}
+.stage::before{content:"";position:absolute;left:8%;right:8%;top:36%;bottom:4%;border-radius:50%;background:radial-gradient(closest-side,color-mix(in oklab,var(--look) 45%,transparent),transparent);filter:blur(24px);opacity:.45;z-index:-1;animation:breathe 7s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.96);opacity:.32}50%{transform:scale(1.04);opacity:.55}}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab;opacity:0;transition:opacity .7s var(--ease-out)}
+.stage canvas.on{opacity:1}
+.stage canvas.dragging{cursor:grabbing}
+.stage .still{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:12% 18% 18%;transition:opacity .6s var(--ease-out)}
+.stage .still.off{opacity:0}
+.glass{background:var(--glass);border:1px solid var(--glass-line);-webkit-backdrop-filter:blur(10px) saturate(1.3);backdrop-filter:blur(10px) saturate(1.3)}
+.badge{position:absolute;left:14px;top:14px;display:flex;align-items:center;gap:8px;margin:0;padding:6px 12px 6px 7px;border-radius:999px;font-size:13px}
+.badge .sw{width:18px;height:18px;border-radius:50%;background:var(--look);box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)}
+.badge b{font-weight:600}
+.navb{position:absolute;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink);transition:transform .5s var(--spring)}
+.navb:hover{transform:translateY(-50%) scale(1.06)}
+.navb:active{transform:translateY(-50%) scale(.94)}
+.navb.prev{left:12px}.navb.next{right:12px}
+.navb svg{width:20px;height:20px}
+.hint{position:absolute;left:50%;bottom:66px;transform:translateX(-50%);margin:0;padding:5px 12px;border-radius:999px;font-size:12.5px;color:var(--muted);white-space:nowrap;transition:opacity .4s;pointer-events:none}
+.hint.gone{opacity:0}
+@media (min-width:1200px){.hint{top:16px;bottom:auto}}
+.controls{position:absolute;left:12px;right:12px;bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;pointer-events:none}
+.controls>*{pointer-events:auto}
+.seg{display:inline-flex;padding:3px;border-radius:999px}
+.seg button{border:0;background:transparent;padding:7px 14px;border-radius:999px;font:inherit;font-size:13px;color:var(--muted);cursor:pointer;transition:background-color .25s,color .25s}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.tools{display:inline-flex;gap:6px}
+.tools button{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;cursor:pointer;color:var(--ink);transition:transform .45s var(--spring)}
+.tools button:hover{transform:scale(1.06)}
+.tools button:active{transform:scale(.94)}
+.tools svg{width:17px;height:17px}
+.nogl{position:absolute;inset:auto 0 18px;text-align:center;font-size:13px;color:var(--muted)}
+
+.rail{grid-area:rail;position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:minmax(150px,1fr);gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px;scrollbar-width:thin}
+.lk{scroll-snap-align:center;display:grid;grid-template-columns:54px minmax(0,1fr);gap:10px;align-items:center;text-align:left;padding:7px 12px 7px 7px;border-radius:16px;border:1px solid var(--line);background:var(--card);cursor:pointer;font:inherit;color:var(--ink);transition:transform .5s var(--spring),background-color .3s,box-shadow .3s}
+.lk:hover{transform:translateY(-2px)}
+.lk[aria-current="true"]{background:color-mix(in oklab,var(--c) 18%,var(--card));box-shadow:inset 0 0 0 1.5px var(--ink);border-color:transparent}
+.lk img{width:54px;height:54px;border-radius:12px;object-fit:contain;background:radial-gradient(circle at 50% 42%,color-mix(in oklab,var(--c) 28%,var(--bg2)),var(--bg2) 75%)}
+.lk .t{min-width:0;display:grid;gap:1px}
+.lk .nm{font-weight:600;font-size:14.5px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lk .st{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+.panel{grid-area:panel;min-height:0;overflow:auto;background:var(--card);border:1px solid var(--line);border-radius:26px;padding:22px 22px 20px;box-shadow:var(--shadow)}
+.panel h1{font-family:var(--sans);font-size:12px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:0}
+.panel .name{font-family:var(--serif);font-size:clamp(38px,4vw,50px);line-height:1;margin:10px 0 10px}
+.panel .rule{width:44px;height:5px;border-radius:3px;background:var(--look);margin:0 0 14px}
+.panel .pitch{font-size:16.5px;margin:0 0 14px}
+.meta{display:flex;flex-wrap:wrap;gap:6px}
+.pill{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;border:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.pill.status{background:color-mix(in oklab,var(--look) 24%,var(--card));border-color:transparent;color:var(--ink)}
+.price{margin:14px 0 14px;font-size:14px;color:var(--muted)}
+.price b{font-family:var(--serif);font-size:28px;font-weight:400;color:var(--ink);font-variant-numeric:tabular-nums}
+dl.spec{margin:0;border-top:1px solid var(--line)}
+.spec>div{display:grid;grid-template-columns:92px minmax(0,1fr);gap:12px;padding:9px 0;border-bottom:1px solid var(--line)}
+.spec dt{color:var(--muted);font-size:13px}
+.spec dd{margin:0;min-width:0}
+.ring{display:flex;flex-wrap:wrap;gap:6px}
+.ring button{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 5px;border-radius:999px;border:1px solid var(--line);background:transparent;font:inherit;font-size:12.5px;cursor:pointer;color:var(--muted);transition:transform .45s var(--spring)}
+.ring button:active{transform:scale(.95)}
+.ring button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink)}
+.ring i{width:16px;height:16px;border-radius:50%;background:var(--rc);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.panel .fine{margin-top:14px;font-size:12.5px;color:var(--muted)}
+
+.after{padding:56px 0 64px;text-align:center}
+.after h2{margin:8px 0 10px}
+.after .lede{margin:0 auto 20px}
+
+@media (min-width:900px){
+  .rail{grid-auto-flow:row;grid-template-columns:repeat(6,minmax(0,1fr));overflow:visible;gap:8px}
+  .lk{grid-template-columns:1fr;justify-items:center;text-align:center;padding:10px 6px 9px;gap:6px}
+  .lk img{width:50px;height:50px}
+  .lk .nm{font-size:13px}
+  .lk .st{display:none}
+}
+@media (max-width:899px){
+  .room{height:auto;min-height:0;grid-template-columns:minmax(0,1fr);grid-template-areas:"stage" "rail" "panel";gap:12px}
+  .stage{height:min(60svh,540px);min-height:360px}
+  .panel{overflow:visible}
+  .rail{grid-auto-columns:74%;padding-inline:13%;scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+}
+@media (max-width:460px){
+  .seg button{padding:7px 11px}
+  .tools{gap:4px}.tools button{width:36px;height:36px}
+  .navb{width:42px;height:42px}
+  .hint{white-space:normal;width:max-content;max-width:80%;text-align:center}
+}
+@media (prefers-reduced-motion:reduce){.stage::before{animation:none}.room{transition:none}}
+</style>
+<script defer src="{{A:collection.js}}"></script>
+</head>
+<body>
+{{HEADER}}
+<main id="main">
+<div class="wrap room" id="room">
+<section class="stage" id="stage" aria-label="3D view of the selected look">
+<img class="still" id="still" src="{{A:img/frame-blush.webp}}" width="560" height="560" alt="">
+<canvas id="c" aria-label="3D model. Drag sideways to turn, scroll or pinch to zoom." hidden></canvas>
+<p class="badge glass" id="badge"><span class="sw"></span><span><b id="bName">Blush Puff</b></span></p>
+<button class="navb prev glass" id="prev" type="button" aria-label="Previous look"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+<button class="navb next glass" id="next" type="button" aria-label="Next look"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+<p class="hint glass" id="hint">Drag to turn · scroll to zoom · double-click to reset</p>
+<div class="controls" id="controls">
+<div class="seg glass" role="group" aria-label="What to show"><button type="button" data-mode="frame" aria-pressed="true">Frame</button><button type="button" data-mode="kit" aria-pressed="false">Full set</button></div>
+<div class="tools">
+<button class="glass" type="button" id="zoomOut" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+<button class="glass" type="button" id="zoomIn" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+<button class="glass" type="button" id="reset" aria-label="Reset view"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></svg></button>
+<button class="glass" type="button" id="spin" aria-label="Pause spin" aria-pressed="true"><svg id="spinIcon" viewBox="0 0 24 24" fill="currentColor"><rect x="6.5" y="5" width="4" height="14" rx="1"/><rect x="13.5" y="5" width="4" height="14" rx="1"/></svg></button>
+</div>
+</div>
+<p class="nogl" id="nogl" hidden>Showing still renderings. The 3D view needs WebGL, which is off in this browser.</p>
+</section>
+
+<nav class="rail" id="rail" aria-label="Looks">
+<button class="lk" type="button" data-i="0" style="--c:#D9A3A6"><img src="{{A:img/thumb-blush.webp}}" width="54" height="54" alt="" decoding="async"><span class="t"><span class="nm">Blush Puff</span><span class="st">Launch look</span></span></button>
+<button class="lk" type="button" data-i="1" style="--c:#9B2F3A"><img src="{{A:img/thumb-holly.webp}}" width="54" height="54" alt="" decoding="async"><span class="t"><span class="nm">Holly Bow</span><span class="st">Launch look · holiday</span></span></button>
+<button class="lk" type="button" data-i="2" style="--c:#E3D6C3"><img src="{{A:img/thumb-oat.webp}}" width="54" height="54" alt="" decoding="async"><span class="t"><span class="nm">Oat Puff</span><span class="st">Launch look</span></span></button>
+<button class="lk" type="button" data-i="3" style="--c:#8B6753"><img src="{{A:img/thumb-kitty.webp}}" width="54" height="54" alt="" decoding="async"><span class="t"><span class="nm">Cocoa Kitty</span><span class="st">Vote for next</span></span></button>
+<button class="lk" type="button" data-i="4" style="--c:#EED27C"><img src="{{A:img/thumb-butter.webp}}" width="54" height="54" alt="" decoding="async"><span class="t"><span class="nm">Butter Wave</span><span class="st">Vote for next</span></span></button>
+<button class="lk" type="button" data-i="5" style="--c:#F2E9DB"><img src="{{A:img/thumb-pearl.webp}}" width="54" height="54" alt="" decoding="async"><span class="t"><span class="nm">Pearl Bobbin</span><span class="st">Vote for next</span></span></button>
+</nav>
+
+<aside class="panel" id="panel" aria-live="polite">
+<h1>Six looks, in 3D</h1>
+<div id="look">
+<h2 class="name">Blush Puff</h2><div class="rule"></div>
+<p class="pitch">Soft blush, head to toe: a puffy frame, a smooth sweater and a pearl strand charm.</p>
+<div class="meta"><span class="pill status">Launch look</span></div>
+<p class="price"><b>$32</b> cover · <b>$72</b> with the base</p>
+<div class="actions"><a class="btn" href="/?look=blush#waitlist">Vote for Blush Puff</a></div>
+</div>
+<p class="fine">3D renderings of our own designs, shown without the device. Planned prices may change before pre-orders open.</p>
+</aside>
+</div>
+
+<section class="after band"><div class="wrap">
+<p class="eyebrow">Waitlist</p>
+<h2>Three launch first. You pick what's next.</h2>
+<p class="lede">Join free, vote on the first drop and the next one, and get launch pricing before anyone else.</p>
+<a class="btn" href="/#waitlist">Join the waitlist</a>
+</div></section>
+</main>
+{{FOOTER}}
+</body>
+</html>

@@ -1,0 +1,18 @@
+<footer class="site-footer"><div class="wrap cols">
+<div>
+<p class="f-brand">{{LOGO}}<span>The Snug Collection</span></p>
+<p>{{LEGAL_LINE}} We make accessories <em>for</em> Apple HomeView&trade; and are not affiliated with or endorsed by Apple.</p>
+<p>Apple and HomeView are trademarks of Apple Inc. Product images are 3D renderings of our own designs and do not depict Apple products. Prices are planned and may change before pre-orders open.</p>
+<p>&copy; {{YEAR}} {{LEGAL_NAME}}. All designs are our own.</p>
+</div>
+<div>
+<p><strong>Questions?</strong> Email <a href="mailto:{{EMAIL}}">{{EMAIL}}</a> or send us a message here.</p>
+<nav class="f-links" aria-label="Footer"><button type="button" class="link" id="contactBtn" aria-expanded="false" aria-controls="contact">Message us</button><a href="/collection/">3D fitting room</a><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a></nav>
+<form class="contact" id="contact" novalidate data-endpoint="{{CONTACT}}">
+<div class="field"><label for="cemail">Your email</label><input id="cemail" name="email" type="email" required autocomplete="email" inputmode="email" spellcheck="false" aria-describedby="cemail-err"><p class="fe" id="cemail-err" role="alert"></p></div>
+<div class="field"><label for="cmsg">Message</label><textarea id="cmsg" name="message" required maxlength="4000" aria-describedby="cmsg-err"></textarea><p class="fe" id="cmsg-err" role="alert"></p></div>
+<div class="hp" aria-hidden="true"><label>Leave this field empty<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+<div class="row"><button class="btn small" type="submit" id="csubmit">Send</button><span class="note" id="cstatus" aria-live="polite"></span></div>
+</form>
+</div>
+</div></footer>

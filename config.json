@@ -1,0 +1,12 @@
+{
+  "domain": "snugcollection.com",
+  "email": "hello@snugcollection.com",
+  "brand": "The Snug Collection",
+  "legal_name": "The Snug Collection",
+  "legal_line": "The Snug Collection is a small business based in metro Atlanta, Georgia. We are forming a company; when we do, these pages will name it.",
+  "updated": "October 15, 2026",
+  "year": "2026",
+  "waitlist_endpoint": "https://contentos.app.n8n.cloud/webhook/ss-waitlist",
+  "contact_endpoint": "https://contentos.app.n8n.cloud/webhook/ss-contact",
+  "analytics_token": ""
+}

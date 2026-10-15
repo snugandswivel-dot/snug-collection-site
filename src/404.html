@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{HEAD}}
+<title>Page not found · The Snug Collection</title>
+<meta name="robots" content="noindex">
+<style>
+.nf{min-height:calc(100svh - 64px - 200px);display:grid;place-items:center;text-align:center;padding-block:56px}
+.nf .art{width:150px;height:150px;margin:0 auto 26px;position:relative}
+.nf .art span{position:absolute;inset:0;border-radius:44px;border:22px solid #D9A3A6;box-shadow:0 18px 30px -18px rgba(43,34,32,.4);animation:tilt 5.5s var(--ease-out) infinite}
+.nf .art i{position:absolute;right:-6px;bottom:-14px;width:20px;height:20px;border-radius:50%;background:#F4EFE8;border:2px solid #D9A3A6;animation:swing 5.5s ease-in-out infinite;transform-origin:50% -30px}
+@keyframes tilt{0%,100%{transform:rotate(-8deg)}50%{transform:rotate(6deg)}}
+@keyframes swing{0%,100%{transform:rotate(10deg)}50%{transform:rotate(-12deg)}}
+.nf h1{font-size:clamp(40px,7vw,64px);margin-bottom:10px}
+.nf .lede{margin:0 auto 22px}
+.nf .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+@media (prefers-reduced-motion:reduce){.nf .art span,.nf .art i{animation:none}}
+</style>
+</head>
+<body>
+{{HEADER}}
+<main id="main" class="wrap nf"><div>
+<div class="art" aria-hidden="true"><span></span><i></i></div>
+<p class="eyebrow">404</p>
+<h1>That page slipped off the counter.</h1>
+<p class="lede">The link may be old or mistyped. Everything we make is a click away.</p>
+<div class="row"><a class="btn" href="/">Go to the home page</a><a class="btn ghost" href="/collection/">See the looks in 3D</a></div>
+</div></main>
+{{FOOTER}}
+</body>
+</html>
