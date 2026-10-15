@@ -25,7 +25,8 @@ var TEX={
       for(var k=0;k<6;k++){ var a=k*Math.PI/3; g.strokeStyle='#e0e0e0'; g.lineWidth=2.5; g.beginPath(); g.ellipse(x+Math.cos(a)*19,y+Math.sin(a)*19,6,4,a,0,Math.PI*2); g.stroke(); } } },rep); },
   quilt:function(rep){ return mk('quilt',function(g){ var img=g.createImageData(S,S), d=img.data, p=64; for(var y=0;y<S;y++) for(var x=0;x<S;x++){ var u=((x+y)%p)/p, w=((x-y+S*4)%p)/p; var a=Math.min(u,1-u), b=Math.min(w,1-w); var m=Math.min(a,b)*2; var v=Math.round(255*Math.pow(Math.sin(Math.min(1,m*1.6)*Math.PI/2),0.6)); var i=(y*S+x)*4; d[i]=d[i+1]=d[i+2]=v; d[i+3]=255; } g.putImageData(img,0,0); },rep); }
 };
-/* outline of the display frame (display is 146.9 mm square, corner R 30) */
+/* outline of the display frame. HomeView's display is 145.9 x 145.5 mm, corner R27.1, 9.8 thick (measured from Apple's AR model);
+   the puff's centerline runs 1.4 mm outside its edge. Matches the v5 mold files. */
 function rrSample(a,rc,N){ var e=a-rc, pts=[], Ls=2*e, La=Math.PI/2*rc, L=4*(Ls+La);
   for(var i=0;i<N;i++){ var s=(i/N)*L, t=s, r, th;
     function edge(x0,y0,x1,y1,nx,ny,len){ var f=t/len; return {p:[x0+(x1-x0)*f,y0+(y1-y0)*f],n:[nx,ny]}; }
@@ -40,12 +41,16 @@ function rrSample(a,rc,N){ var e=a-rc, pts=[], Ls=2*e, La=Math.PI/2*rc, L=4*(Ls+
     else { t-=La; r=edge(-e,a,0,a,0,1,e); }
     r.s=s/L; pts.push(r); }
   return {pts:pts,L:L}; }
-function outline(kind){ var N=720, base=rrSample(74.6,31,N), L=base.L, out=[];
+function outline(kind){ var N=720, base=rrSample(74.35,28.5,N), L=base.L, out=[];
   if(kind==='oval'){ for(var i=0;i<N;i++){ var t=Math.PI/2-i/N*Math.PI*2, n=2.25, c=Math.cos(t), s=Math.sin(t); out.push([86*Math.sign(c)*Math.pow(Math.abs(c),2/n), 3+93*Math.sign(s)*Math.pow(Math.abs(s),2/n)]); } return out; }
   base.pts.forEach(function(q){ var d=0,k; if(kind==='wave'){ k=Math.round(L/30); d=3.4*Math.cos(2*Math.PI*k*q.s)+2.6; } else if(kind==='scallop'){ k=Math.round(L/24); d=5.2*Math.abs(Math.cos(Math.PI*k*q.s))-0.8; } else if(kind==='cloud'){ k=Math.round(L/50); d=10*Math.pow(Math.abs(Math.cos(Math.PI*k*q.s)),0.55)-1; }
     out.push([q.p[0]+q.n[0]*d,q.p[1]+q.n[1]*d]); });
   return out; }
-function holePath(h,top){ top=top||0; return rrSample(h,16,400).pts.map(function(q){ var x=q.p[0], y=q.p[1]; if(y>0) y+=top*Math.min(1,(y/(h-16))); return [x,y]; }); }
+/* front opening; 'bay' opens the top center so nothing sits in front of the camera (4.9 mm below the top edge) */
+function holePath(h,top,bay){ top=top||0; return rrSample(h,16,400).pts.map(function(q){ var x=q.p[0], y=q.p[1]; if(y>0&&top){ var f=bay?Math.max(0,Math.min(1,(bay+8-Math.abs(x))/8)):1; y+=top*f*Math.min(1,(y/(h-16))); } return [x,y]; }); }
+function rrNotch(w,h,r,bw,bh){ var p=new T.Path(), x=-w/2, y=-h/2, t=h/2, c=2; p.moveTo(x+r,y); p.lineTo(x+w-r,y); p.quadraticCurveTo(x+w,y,x+w,y+r); p.lineTo(x+w,t-r); p.quadraticCurveTo(x+w,t,x+w-r,t);
+  p.lineTo(bw/2+c,t); p.quadraticCurveTo(bw/2,t,bw/2,t+c); p.lineTo(bw/2,t+bh-c); p.quadraticCurveTo(bw/2,t+bh,bw/2-c,t+bh); p.lineTo(-bw/2+c,t+bh); p.quadraticCurveTo(-bw/2,t+bh,-bw/2,t+bh-c); p.lineTo(-bw/2,t+c); p.quadraticCurveTo(-bw/2,t,-bw/2-c,t);
+  p.lineTo(x+r,t); p.quadraticCurveTo(x,t,x,t-r); p.lineTo(x,y+r); p.quadraticCurveTo(x,y,x+r,y); return p; }
 function toShape(outer,hole){ var s=new T.Shape(); s.moveTo(outer[0][0],outer[0][1]); for(var i=1;i<outer.length;i++) s.lineTo(outer[i][0],outer[i][1]); s.closePath();
   if(hole){ var h=new T.Path(); h.moveTo(hole[0][0],hole[0][1]); for(i=1;i<hole.length;i++) h.lineTo(hole[i][0],hole[i][1]); h.closePath(); s.holes.push(h); } return s; }
 function tubeAlong(pts,z,r,mat,segMul){ var v=pts.map(function(p){ return new T.Vector3(p[0],p[1],z); }); var c=new T.CatmullRomCurve3(v,true,'centripetal'); return new T.Mesh(new T.TubeGeometry(c,Math.round(pts.length*(segMul||1)),r,24,true),mat); }
@@ -70,19 +75,19 @@ function woodMat(key,o){ o=o||{}; var m=new T.MeshPhysicalMaterial({color:lin(WO
   return m; }
 function rrShape(w,h,r,path){ var s=path?new T.Path():new T.Shape(), x=-w/2, y=-h/2; s.moveTo(x+r,y); s.lineTo(x+w-r,y); s.quadraticCurveTo(x+w,y,x+w,y+r); s.lineTo(x+w,y+h-r); s.quadraticCurveTo(x+w,y+h,x+w-r,y+h); s.lineTo(x+r,y+h); s.quadraticCurveTo(x,y+h,x,y+h-r); s.lineTo(x,y+r); s.quadraticCurveTo(x,y,x+r,y); return s; }
 function buildWoodFrame(L){ var G=new T.Group();
-  var bs=rrShape(168,168,33); bs.holes.push(rrShape(132,132,16,true));
+  var bs=rrShape(166.6,166.6,32.7); bs.holes.push(rrNotch(131,131,16,40,6));
   var base=new T.Mesh(new T.ExtrudeGeometry(bs,{depth:8,bevelEnabled:true,bevelThickness:2.5,bevelSize:2.5,bevelSegments:6,curveSegments:24}),pmat(L.color,{r:0.72,env:0.55})); base.position.z=-6.5; G.add(base);
-  var ws=rrShape(163,163,30); ws.holes.push(rrShape(137,137,18,true));
+  var ws=rrShape(161.7,161.7,29.8); ws.holes.push(rrNotch(135.9,135.9,17.9,40,3.6));
   var ring=new T.Mesh(new T.ExtrudeGeometry(ws,{depth:2.2,bevelEnabled:true,bevelThickness:0.5,bevelSize:0.5,bevelSegments:2,curveSegments:24}),[woodMat(L.wood,{off:[0.31,0.2]}),woodMat(L.wood,{rx:1/60,ry:1/20})]);
   ring.position.z=3.1; G.add(ring); return sh(G); }
 function buildFrame(L,opts){ opts=opts||{}; if(L.wood) return buildWoodFrame(L);
   var G=new T.Group(), fm=pmat(L.color,{r:0.72,env:0.55,bump:TEX.soft([3,3]),bs:0.2});
-  var kind=L.shape, out=outline(kind==='ruffle'||kind==='bobbin'?'puff':kind), hole=holePath(64,7), holeB=holePath(66.5,0);
+  var kind=L.shape, out=outline(kind==='ruffle'||kind==='bobbin'?'puff':kind), hole=holePath(66.5,6,20), holeB=holePath(66.5,0);
   var pm=fm.clone(); pm.side=T.DoubleSide;
   var front=new T.Mesh(new T.ShapeGeometry(toShape(out,hole),1),pm); front.position.z=TR; G.add(front);
   var back=new T.Mesh(new T.ShapeGeometry(toShape(out,holeB),1),pm); back.position.z=-TR; G.add(back);
-  var bs=new T.Shape(); (function(){ var w=136,h=136,r=24,x=-w/2,y=-h/2; bs.moveTo(x+r,y); bs.lineTo(x+w-r,y); bs.quadraticCurveTo(x+w,y,x+w,y+r); bs.lineTo(x+w,y+h-r); bs.quadraticCurveTo(x+w,y+h,x+w-r,y+h); bs.lineTo(x+r,y+h); bs.quadraticCurveTo(x,y+h,x,y+h-r); bs.lineTo(x,y+r); bs.quadraticCurveTo(x,y,x+r,y); })();
-  var hh=new T.Path(); hh.absarc(0,-50,14.8,0,Math.PI*2,true); bs.holes.push(hh); var mh=new T.Path(); mh.absarc(5.3,48,2.6,0,Math.PI*2,true); bs.holes.push(mh);
+  var bs=new T.Shape(); (function(){ var w=134.8,h=134.4,r=25,x=-w/2,y=-h/2; bs.moveTo(x+r,y); bs.lineTo(x+w-r,y); bs.quadraticCurveTo(x+w,y,x+w,y+r); bs.lineTo(x+w,y+h-r); bs.quadraticCurveTo(x+w,y+h,x+w-r,y+h); bs.lineTo(x+r,y+h); bs.quadraticCurveTo(x,y+h,x,y+h-r); bs.lineTo(x,y+r); bs.quadraticCurveTo(x,y,x+r,y); })();
+  /* closed back is not used: the hinge arm (30 mm below center, 20 wide) would block it from sliding on */ var hh=new T.Path(); hh.absarc(0,-30,12,0,Math.PI*2,true); bs.holes.push(hh);
   if(!opts.openBack){ var bp=new T.Mesh(new T.ShapeGeometry(bs,16),pm); bp.position.z=-6.2; G.add(bp); }
   G.add(tubeAlong(out,0,TR,fm,1.0)); G.add(tubeAlong(hole,TR-2.4,2.4,fm,0.8));
   var trim=L.trim==='pearl'?pmat('#f4efe8',{r:0.2,cc:1,ccr:0.08,env:1.3}):fm;
