@@ -91,6 +91,12 @@ for p in sorted(SRC.rglob('*.html')):
     out.write_text(render_page(p.read_text()))
     pages.append(rel)
 
+# lab (unlinked test pages); binary model files copied as-is
+lab = SRC / 'lab'
+if lab.exists():
+    for f in lab.rglob('*'):
+        if f.is_file() and f.suffix != '.html':
+            d = DIST / f.relative_to(SRC); d.parent.mkdir(parents=True, exist_ok=True); shutil.copy(f, d)
 # root files
 for name in ['favicon.svg', 'favicon-32.png', 'apple-touch-icon.png', 'icon-512.png', 'og.jpg', 'og-collection.jpg']:
     if (SRC / name).exists():
@@ -123,6 +129,12 @@ csp = ("default-src 'self'; script-src 'self' https://static.cloudflareinsights.
     '  Content-Security-Policy: %s\n'
     '\n/assets/*\n'
     '  Cache-Control: public, max-age=31536000, immutable\n'
+    '\n/lab/*\n'
+    '  X-Robots-Tag: noindex\n'
+    '\n/lab/ar/*.usdz\n'
+    '  Content-Type: model/vnd.usdz+zip\n'
+    '\n/lab/ar/*.glb\n'
+    '  Content-Type: model/gltf-binary\n'
     '\nhttps://:project.pages.dev/*\n'
     '  X-Robots-Tag: noindex\n'
     '\nhttps://:version.:project.pages.dev/*\n'
