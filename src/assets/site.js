@@ -16,8 +16,8 @@ function post(url,o,onOk,onFail){
   var ctrl=('AbortController' in window)?new AbortController():null;
   var t=setTimeout(function(){ if(ctrl) ctrl.abort(); },9000);
   fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(o),signal:ctrl?ctrl.signal:undefined,mode:'cors'})
-    .then(function(r){ clearTimeout(t); if(r.ok) onOk(); else throw new Error('status '+r.status); })
-    .catch(function(){ clearTimeout(t);
+    .then(function(r){ clearTimeout(t); if(r.ok) onOk(); else onFail(); }, function(){ clearTimeout(t);
+      /* only a network or CORS failure falls back to a plain form post; a server that answered "no" is a real failure */
       try{
         var name='ssf'+Date.now(), ifr=document.createElement('iframe'); ifr.name=name; ifr.title='form'; ifr.hidden=true; document.body.appendChild(ifr);
         var f=document.createElement('form'); f.method='POST'; f.action=url; f.target=name; f.hidden=true;
