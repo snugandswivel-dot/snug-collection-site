@@ -58,7 +58,7 @@ function ruffle(out,mat){ var n=out.length, nm=normals2(out), M=12, W=12, flutes
 function bobbins(G,out,mat){ var nm=normals2(out), n=out.length, acc=0, step=9.2, last=null; for(var i=0;i<n;i++){ if(last) acc+=Math.hypot(out[i][0]-last[0],out[i][1]-last[1]); last=out[i]; if(acc>=step||i===0){ acc=0; var b=new T.Mesh(new T.SphereGeometry(4.3,18,12),mat); b.position.set(out[i][0]+nm[i][0]*(TR+2.2),out[i][1]+nm[i][1]*(TR+2.2),0); G.add(b); } } }
 function cornerPoint(out,sx,sy){ var best=null,bv=-1e9; out.forEach(function(p){ var v=sx*p[0]+sy*p[1]; if(v>bv){ bv=v; best=p; } }); var l=Math.hypot(best[0],best[1]); return [best[0]+best[0]/l*(TR+1.5), best[1]+best[1]/l*(TR+1.5)]; }
 function buildFrame(L,opts){ opts=opts||{};
-  var G=new T.Group(), fm=pmat(L.color,{r:0.72,env:0.55,bump:TEX.soft([3,3]),bs:0.2,sheen:'#ffffff'});
+  var G=new T.Group(), fm=pmat(L.color,{r:0.72,env:0.55,bump:TEX.soft([3,3]),bs:0.2});
   var kind=L.shape, out=outline(kind==='ruffle'||kind==='bobbin'?'puff':kind), hole=holePath(64,7), holeB=holePath(66.5,0);
   var pm=fm.clone(); pm.side=T.DoubleSide;
   var front=new T.Mesh(new T.ShapeGeometry(toShape(out,hole),1),pm); front.position.z=TR; G.add(front);
@@ -69,8 +69,8 @@ function buildFrame(L,opts){ opts=opts||{};
   G.add(tubeAlong(out,0,TR,fm,1.0)); G.add(tubeAlong(hole,TR-2.4,2.4,fm,0.8));
   var trim=L.trim==='pearl'?pmat('#f4efe8',{r:0.2,cc:1,ccr:0.08,env:1.3}):fm;
   if(kind==='ruffle') G.add(ruffle(out,trim)); if(kind==='bobbin') bobbins(G,out,trim);
-  if(L.topper==='ears'){ var inner=pmat(L.inner||'#E3B9B3',{r:0.7,sheen:'#ffffff'}); [-1,1].forEach(function(sx){ var e=new T.Group(); e.add(new T.Mesh(ext(earShape(30,30),5,3.2),fm)); var i=new T.Mesh(ext(earShape(17,19),2,1.2),inner); i.position.set(0,4,4.2); e.add(i); e.position.set(sx*47,TR+71,0); e.rotation.z=-sx*0.22; G.add(e); }); }
-  if(L.topper==='bow'){ var b=bow(pmat(L.bowColor,{r:0.38,cc:0.35,sheen:'#ffffff'})); b.scale.setScalar(1.7); b.position.set(-50,72+TR+4,6); b.rotation.z=0.12; G.add(b); }
+  if(L.topper==='ears'){ var inner=pmat(L.inner||'#E3B9B3',{r:0.7}); [-1,1].forEach(function(sx){ var e=new T.Group(); e.add(new T.Mesh(ext(earShape(30,30),5,3.2),fm)); var i=new T.Mesh(ext(earShape(17,19),2,1.2),inner); i.position.set(0,4,4.2); e.add(i); e.position.set(sx*47,TR+71,0); e.rotation.z=-sx*0.22; G.add(e); }); }
+  if(L.topper==='bow'){ var b=bow(pmat(L.bowColor,{r:0.38,cc:0.35})); b.scale.setScalar(1.7); b.position.set(-50,72+TR+4,6); b.rotation.z=0.12; G.add(b); }
   if(L.charms&&L.charms.length){ var cp=cornerPoint(out,1,-1); var lp=new T.Mesh(new T.TorusGeometry(2.6,0.9,8,18),fm); lp.position.set(cp[0],cp[1],0); lp.rotation.y=Math.PI/2; G.add(lp);
     var cm=pmat('#d3b06a',{r:0.35,m:0.6}); L.charms.forEach(function(it){ var g=new T.Group(); g.position.set(cp[0]+(it.dx||0),cp[1]-2.6,(it.dz||0)); var c=new T.Mesh(new T.CylinderGeometry(0.45,0.45,it.drop,8),cm); c.position.y=-it.drop/2; g.add(c); var pc=CH[it.k].apply(null,it.a||[]); pc.position.y=-it.drop; pc.rotation.y=0.4; g.add(pc); G.add(g); }); }
   G.userData.out=out; return sh(G); }
@@ -93,15 +93,15 @@ var CH={
 };
 function buildSweater(L){
   var R=42.1, th=1.8, h=25, capH=38.2, G=new T.Group(), col=L.sleeveColor||L.color, tx=L.sleeve, mat;
-  if(tx==='rib') mat=pmat(col,{r:0.88,env:0.45,bump:TEX.rib([22,2.2]),bs:1.2,sheen:'#ffffff'});
-  else if(tx==='boucle') mat=pmat(col,{r:0.95,env:0.4,bump:TEX.boucle([10,1.2]),bs:1.6,sheen:'#ffffff'});
-  else if(tx==='quilt') mat=pmat(col,{r:0.7,env:0.55,bump:TEX.quilt([6,0.7]),bs:2.2,sheen:'#ffffff'});
-  else if(tx==='eyelet'){ var cmap=TEX.eyeletColor(col,L.holeColor||'#d8cfbf',[9,1]); cmap.encoding=T.sRGBEncoding; mat=pmat('#ffffff',{r:0.85,env:0.45,map:cmap,bump:TEX.eyeletBump([9,1]),bs:1.0,sheen:'#ffffff'}); }
+  if(tx==='rib') mat=pmat(col,{r:0.88,env:0.45,bump:TEX.rib([22,2.2]),bs:1.2,sheen:col});
+  else if(tx==='boucle') mat=pmat(col,{r:0.95,env:0.4,bump:TEX.boucle([10,1.2]),bs:1.6,sheen:col});
+  else if(tx==='quilt') mat=pmat(col,{r:0.7,env:0.55,bump:TEX.quilt([6,0.7]),bs:2.2,sheen:col});
+  else if(tx==='eyelet'){ var cmap=TEX.eyeletColor(col,L.holeColor||'#d8cfbf',[9,1]); cmap.encoding=T.sRGBEncoding; mat=pmat('#ffffff',{r:0.85,env:0.45,map:cmap,bump:TEX.eyeletBump([9,1]),bs:1.0,sheen:col}); }
   else mat=pmat(col,{r:0.78,env:0.5,bump:TEX.soft([6,1]),bs:0.25});
   var cyl=new T.Mesh(new T.CylinderGeometry(R+th,R+th,h,72,1,true),mat); cyl.position.y=h/2; cyl.material.side=T.DoubleSide; G.add(cyl);
   var dm=mat.clone(); ['bumpMap','map'].forEach(function(k){ if(mat[k]){ dm[k]=mat[k].clone(); dm[k].needsUpdate=true; dm[k].repeat.set(mat[k].repeat.x,mat[k].repeat.y*1.6); } });
   var dome=new T.Mesh(new T.SphereGeometry(R+th,72,28,0,Math.PI*2,0,Math.PI/2),dm); dome.position.y=h; dome.scale.y=(capH+th)/(R+th); G.add(dome);
-  var cuff=new T.Mesh(new T.TorusGeometry(R+th+0.4,2.6,12,96),tx==='eyelet'?pmat(col,{r:0.85,env:0.45,sheen:'#ffffff'}):mat); cuff.rotation.x=Math.PI/2; cuff.position.y=2.4; G.add(cuff);
+  var cuff=new T.Mesh(new T.TorusGeometry(R+th+0.4,2.6,12,96),tx==='eyelet'?pmat(col,{r:0.85,env:0.45,sheen:col}):mat); cuff.rotation.x=Math.PI/2; cuff.position.y=2.4; G.add(cuff);
   return sh(G); }
 function buildBase(L){
   var col=L.baseColor, mat=pmat(col,{r:0.3,cc:0.9,ccr:0.25,env:0.9}), G=new T.Group();

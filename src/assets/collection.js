@@ -1,62 +1,61 @@
-/* The Snug Collection 3D fitting room: six looks, swipe rail, drag to turn. */
+/* The Snug Collection 3D fitting room: six looks, swipe rail, drag to turn, base finishes. */
 (function(){
 'use strict';
 var $=function(id){ return document.getElementById(id); };
 var RM=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var COARSE=window.matchMedia&&window.matchMedia('(pointer: coarse)').matches;
-var LAUNCH_RING='#C9CBD0';
+/* base finishes: the swivel ring material. Kept in one table so new finishes are one line. */
+var FINISHES={cloud:{name:'Cloud',sw:'#F3F1EE',color:'#F3F1EE',m:0,r:0.32,cc:0.9,env:0.9},aluminum:{name:'Aluminum',sw:'#C9CBD0',color:'#D3D4D7',m:0.95,r:0.28,cc:0,env:1.6},graphite:{name:'Graphite',sw:'#2C2C30',color:'#2C2C30',m:0.8,r:0.4,cc:0,env:1.3}};
 var DATA=[
- {key:'blush',name:'Blush Puff',status:'Launch look',color:'#D9A3A6',ring:'#D7A9AA',
+ {key:'blush',name:'Blush Puff',status:'Launch look',color:'#D9A3A6',
   pitch:'Soft blush, head to toe: a puffy frame, a smooth sweater and a pearl strand charm.',
   price:'<b>$32</b> cover · <b>$72</b> with the base',
   spec:[['Frame','Puff edge, blush silicone'],['Sweater','Smooth knit, rolled cuff'],['Charms','Pearl strand and pearl heart']],
   vote:'/?look=blush#waitlist',voteLabel:'Vote for Blush Puff'},
- {key:'holly',name:'Holly Bow',status:'Launch look · holiday limited run',color:'#9B2F3A',ring:'#F1EADC',
+ {key:'holly',name:'Holly Bow',status:'Launch look · holiday limited run',color:'#9B2F3A',
   pitch:'Cranberry with an ivory bow for the holidays. The bow clips off in January and the frame stays.',
   price:'<b>$36</b> cover · <b>$76</b> with the base',
-  spec:[['Frame','Puff edge, cranberry silicone'],['Sweater','Ivory rib knit'],['Topper','Ivory bow, clear of the camera'],['Charms','Ornament and gold star']],
+  spec:[['Frame','Puff edge, cranberry silicone'],['Sweater','Ivory rib knit'],['Topper','Molded ivory bow, clear of the camera'],['Charms','Ornament and gold star']],
   vote:'/?look=holly#waitlist',voteLabel:'Vote for Holly Bow'},
- {key:'oat',name:'Oat Puff',status:'Launch look',color:'#E3D6C3',ring:'#EAE1D2',
+ {key:'oat',name:'Oat Puff',status:'Launch look',color:'#E3D6C3',
   pitch:'Warm oat and bouclé. Quiet enough for a shared counter, soft enough to notice.',
   price:'<b>$32</b> cover · <b>$72</b> with the base',
   spec:[['Frame','Puff edge, oat silicone'],['Sweater','Oat bouclé'],['Charms','Add your own']],
   vote:'/?look=oat#waitlist',voteLabel:'Vote for Oat Puff'},
- {key:'kitty',name:'Cocoa Kitty',status:'Next-drop candidate',color:'#8B6753',ring:'#6E5142',
+ {key:'kitty',name:'Cocoa Kitty',status:'Next-drop candidate',color:'#8B6753',
   pitch:'Cat ears and a cloud edge turn the screen into a character.',
   price:'Price set after the vote',
   spec:[['Frame','Cloud edge, cocoa silicone'],['Topper','Cat ears with blush inner ears'],['Sweater','Cocoa bouclé'],['Charm','Blush heart']],
   vote:'/?next=kitty#waitlist',voteLabel:'Vote to make it next'},
- {key:'butter',name:'Butter Wave',status:'Next-drop candidate',color:'#EED27C',ring:'#F1E9D6',
+ {key:'butter',name:'Butter Wave',status:'Next-drop candidate',color:'#EED27C',
   pitch:'Butter yellow on a wavy edge, with a daisy and pearls on the corner.',
   price:'Price set after the vote',
   spec:[['Frame','Wave edge, butter yellow'],['Sweater','Butter rib knit'],['Charms','Daisy and pearls']],
   vote:'/?next=butter#waitlist',voteLabel:'Vote to make it next'},
- {key:'pearl',name:'Pearl Bobbin',status:'Next-drop candidate',color:'#F2E9DB',ring:'#EFE6D8',
+ {key:'pearl',name:'Pearl Bobbin',status:'Next-drop candidate',color:'#F2E9DB',
   pitch:'Pearl beads ring the frame, so it ships already accessorized.',
   price:'Price set after the vote',
   spec:[['Frame','Puff edge ringed with pearl beads'],['Sweater','Cream eyelet'],['Charms','None needed']],
   vote:'/?next=pearl#waitlist',voteLabel:'Vote to make it next'}
 ];
-var N=DATA.length, idx=-1, mode='frame', ringMode='launch', G3=null;
-var room=$('room'), rail=$('rail'), lookEl=$('look'), hint=$('hint'), still=$('still');
-if(COARSE) hint.textContent='Drag sideways to turn · pinch to zoom · double-tap to reset';
+var N=DATA.length, idx=-1, mode='frame', finish='aluminum', finTouched=false, G3=null;
+var room=$('room'), rail=$('rail'), lookEl=$('look'), hint=$('hint'), still=$('still'), stageEl=$('stage'), badge=$('badge');
 var cards=Array.prototype.slice.call(rail.querySelectorAll('.lk'));
-var stills=['{{A:img/frame-blush.webp}}','{{A:img/frame-holly.webp}}','{{A:img/frame-oat.webp}}','{{A:img/frame-kitty.webp}}','{{A:img/frame-butter.webp}}','{{A:img/frame-pearl.webp}}'];
+var stills=['{{A:img/photo-blush.webp}}','{{A:img/photo-holly.webp}}','{{A:img/photo-oat.webp}}','{{A:img/photo-kitty.webp}}','{{A:img/photo-butter.webp}}','{{A:img/photo-pearl.webp}}'];
+var ALTS=['a soft pink silicone frame on a white counter','a cranberry silicone frame with an ivory bow','a cream silicone frame','a cocoa cloud-edged frame with cat ears','a butter-yellow wave-edged frame','a cream frame ringed with pearl beads'];
+function voteHref(d){ return finTouched?d.vote.replace('#','&finish='+finish+'#'):d.vote; }
 
 function lookHTML(d){
-  var ring='<div><dt>Swivel ring</dt><dd><div class="ring" role="group" aria-label="Ring color">'+
-    '<button type="button" data-ring="launch" aria-pressed="'+(ringMode==='launch')+'" style="--rc:'+LAUNCH_RING+'"><i></i>Pearl grey · launching</button>'+
-    '<button type="button" data-ring="match" aria-pressed="'+(ringMode==='match')+'" style="--rc:'+d.ring+'"><i></i>Matching · later drops</button></div></dd></div>';
-  return '<h2 class="name">'+d.name+'</h2><div class="rule"></div>'+
+  var fin='<div class="finrow"><dt>Base finish</dt><dd><div class="fin" role="group" aria-label="Base finish">'+Object.keys(FINISHES).map(function(k){ var f=FINISHES[k]; return '<button type="button" data-fin="'+k+'" aria-pressed="'+(finish===k)+'" style="--rc:'+f.sw+'"><i></i>'+f.name+'</button>'; }).join('')+'</div></dd></div>';
+  return '<h2 class="name">'+d.name+'</h2><span class="status">'+d.status+'</span>'+
     '<p class="pitch">'+d.pitch+'</p>'+
-    '<div class="meta"><span class="pill status">'+d.status+'</span></div>'+
     '<p class="price">'+d.price+'</p>'+
-    '<dl class="spec">'+d.spec.map(function(r){ return '<div><dt>'+r[0]+'</dt><dd>'+r[1]+'</dd></div>'; }).join('')+ring+'</dl>'+
-    '<div class="actions"><a class="btn" href="'+d.vote+'">'+d.voteLabel+'</a><button class="btn ghost" type="button" id="shareLook">Share this look</button><span class="note" id="shared" aria-live="polite"></span></div>';
+    '<dl class="spec">'+d.spec.map(function(r){ return '<div><dt>'+r[0]+'</dt><dd>'+r[1]+'</dd></div>'; }).join('')+fin+'</dl>'+
+    '<div class="actions"><a class="btn" id="voteBtn" href="'+voteHref(d)+'">'+d.voteLabel+'</a><button class="btn ghost" type="button" id="shareLook">Share this look</button><span class="note" id="shared" aria-live="polite"></span></div>';
 }
 lookEl.addEventListener('click',function(e){
-  var b=e.target.closest('[data-ring]');
-  if(b){ ringMode=b.getAttribute('data-ring'); lookEl.querySelectorAll('[data-ring]').forEach(function(x){ x.setAttribute('aria-pressed',String(x.getAttribute('data-ring')===ringMode)); }); if(G3){ G3.rings(); if(mode!=='kit') setMode('kit'); } return; }
+  var b=e.target.closest('[data-fin]');
+  if(b){ finish=b.getAttribute('data-fin'); finTouched=true; lookEl.querySelectorAll('[data-fin]').forEach(function(x){ x.setAttribute('aria-pressed',String(x.getAttribute('data-fin')===finish)); }); var v=$('voteBtn'); if(v) v.href=voteHref(DATA[idx]); if(G3){ G3.finish(); if(mode!=='kit') setMode('kit'); } else { setMode('kit'); start3D(); } return; }
   if(e.target.closest('#shareLook')){
     var d=DATA[idx], url=location.origin+'/collection/#'+d.key, msg=$('shared');
     if(navigator.share){ navigator.share({title:d.name+' · The Snug Collection',text:d.name+', a cozy cover for the new Apple HomeView. Spin it in 3D:',url:url}).catch(function(){}); return; }
@@ -78,11 +77,11 @@ document.addEventListener('keydown',function(e){ var t=e.target; if(t&&(t.tagNam
 
 function select(i,o){
   o=o||{}; i=((i%N)+N)%N; if(i===idx&&!o.force) return; idx=i; var d=DATA[i];
-  room.style.setProperty('--look',d.color);
+  badge.style.setProperty('--c',d.color);
   lookEl.innerHTML=lookHTML(d);
   cards.forEach(function(c,k){ c.setAttribute('aria-current',String(k===i)); });
   $('bName').textContent=d.name;
-  if(!G3){ still.src=stills[i]; still.alt=d.name+', 3D rendering'; }
+  still.src=stills[i]; still.alt=d.name+', '+ALTS[i];
   if(!o.fromRail) scrollRail(i,!o.instant);
   if(!o.noHash){ try{ history.replaceState(null,'','#'+d.key); }catch(e){} }
   if(G3) G3.show(i,o.instant);
@@ -100,16 +99,16 @@ function initGL(){
   renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.75)); renderer.setClearColor(0,0);
   renderer.outputEncoding=T.sRGBEncoding; renderer.toneMapping=T.ACESFilmicToneMapping; renderer.toneMappingExposure=1.0;
   renderer.shadowMap.enabled=true; renderer.shadowMap.type=T.PCFSoftShadowMap;
-  var scene=SV.makeScene(renderer), camera=new T.PerspectiveCamera(24,1,10,9000);
+  var scene=SV.makeScene(renderer), camera=new T.PerspectiveCamera(20,1,10,9000);
   scene.traverse(function(l){ if(l.isDirectionalLight&&l.shadow) l.shadow.mapSize.set(1024,1024); });
-  var MODES={frame:{ty:84,tz:0,H:134,W:122,theta:0.42,phi:1.32},kit:{ty:76,tz:10,H:134,W:180,theta:0.32,phi:1.24}};
+  var MODES={frame:{ty:82,tz:0,H:132,W:126,theta:0.38,phi:1.36},kit:{ty:72,tz:8,H:134,W:180,theta:0.32,phi:1.28}};
   var view={theta:MODES.frame.theta,phi:MODES.frame.phi,zoom:1};
   var cache={}, cur=null, anim=null, dirty=true, spinning=!RM, autoUntil=performance.now()+16000, spinBtn=$('spin');
-  function ringFor(i){ return ringMode==='match'?DATA[i].ring:LAUNCH_RING; }
+  function applyFinish(mat){ var f=FINISHES[finish]; if(!mat||!f) return; mat.color=SV.lin(f.color); mat.metalness=f.m; mat.roughness=f.r; mat.clearcoat=f.cc; mat.envMapIntensity=f.env; mat.needsUpdate=true; }
   function getModel(i,m){ var k=i+':'+m; if(cache[k]) return cache[k];
     var L=SV.LOOKS[DATA[i].key], root=new T.Group(), inner, cy=MODES[m].ty;
     if(m==='frame'){ inner=SV.buildFrame(L,{openBack:true}); inner.rotation.x=-rad(12); inner.position.y=84*Math.cos(rad(12))+SV.TR*Math.sin(rad(12))+0.5; }
-    else { inner=SV.kit(L,{ring:ringFor(i)}); root.userData.ringMat=inner.userData.ringMat; root.userData.i=i; }
+    else { inner=SV.kit(L,{}); root.userData.ringMat=inner.userData.ringMat; applyFinish(root.userData.ringMat); }
     var wrap=new T.Group(); wrap.add(inner); wrap.position.y=-cy; root.add(wrap); root.position.y=cy; cache[k]=root; return root; }
   function place(){ var v=MODES[mode], t=Math.tan(rad(camera.fov/2)); var r=Math.max(v.H/t,v.W/(camera.aspect*t))*1.06*view.zoom, s=Math.sin(view.phi);
     camera.position.set(r*s*Math.sin(view.theta),v.ty+r*Math.cos(view.phi),v.tz+r*s*Math.cos(view.theta)); camera.lookAt(0,v.ty,v.tz); }
@@ -165,11 +164,11 @@ function initGL(){
     }
     requestAnimationFrame(tick); }
   requestAnimationFrame(tick);
-  canvas.hidden=false; requestAnimationFrame(function(){ canvas.classList.add('on'); still.classList.add('off'); });
+  canvas.hidden=false; requestAnimationFrame(function(){ canvas.classList.add('on'); stageEl.classList.remove('ask'); stageEl.classList.add('live'); hint.textContent=COARSE?'Drag sideways to turn · pinch to zoom · double-tap to reset':'Drag to turn · scroll to zoom · double-click to reset'; });
   return {
     show:show,
     setMode:function(){ resetView(); show(idx,false); },
-    rings:function(){ Object.keys(cache).forEach(function(k){ var o=cache[k]; if(o.userData.ringMat) o.userData.ringMat.color.copy(SV.lin(ringFor(o.userData.i))); }); dirty=true; }
+    finish:function(){ Object.keys(cache).forEach(function(k){ applyFinish(cache[k].userData.ringMat); }); dirty=true; }
   };
 }
 
@@ -181,16 +180,17 @@ select(start,{instant:true,force:true,noHash:!h});
 function canGL(){ return !!(window.WebGLRenderingContext||window.WebGL2RenderingContext); }
 function loadScript(src,cb){ var s=document.createElement('script'); s.src=src; s.async=false; s.onload=cb; s.onerror=function(){}; document.head.appendChild(s); }
 var started=false;
-function start3D(){ if(started) return; started=true;
+function start3D(){ if(started||!canGL()) return; started=true;
   loadScript('{{A:three.min.js}}',function(){ loadScript('{{A:viewer.js}}',function(){
     try{ G3=initGL(); }catch(e){ G3=null; if(window.console) console.warn('3D off:',e&&e.message); }
     if(G3) G3.show(idx,true); else { $('controls').hidden=true; hint.hidden=true; $('nogl').hidden=false; }
   }); });
 }
 if(canGL()){
-  /* this page is the 3D, so start soon after load, but on phones not mid-scroll: wait for an idle moment or a tap on the stage */
-  (COARSE?[]:['pointermove','pointerdown','wheel','keydown']).forEach(function(ev){ window.addEventListener(ev,start3D,{passive:true,once:true}); });
-  $('stage').addEventListener('pointerdown',start3D,{passive:true,once:true});
-  window.addEventListener('load',function(){ setTimeout(function(){ if(window.requestIdleCallback) requestIdleCallback(start3D,{timeout:2500}); else start3D(); },COARSE?1200:2500); });
+  /* the photo is the resting state; the model loads on the first sign of intent, never on a timer (the scene build is a long main-thread job, worst on phones mid-scroll).
+     Desktop: the first mouse move, wheel or key. Phones: a tap on the picture or its controls. */
+  (COARSE?[]:['pointermove','wheel','keydown']).forEach(function(ev){ window.addEventListener(ev,start3D,{passive:true,once:true}); });
+  stageEl.addEventListener('pointerdown',start3D,{passive:true,once:true});
+  if(COARSE){ hint.textContent='Tap to spin in 3D'; stageEl.classList.add('ask'); }
 } else { $('controls').hidden=true; hint.hidden=true; $('nogl').hidden=false; }
 })();

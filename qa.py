@@ -9,8 +9,8 @@ async def run():
     async with async_playwright() as p:
         b = await p.chromium.launch(args=ARGS)
         report = {}
-        async def page(vp, scheme='light', rm='no-preference'):
-            ctx = await b.new_context(viewport=vp, color_scheme=scheme, device_scale_factor=1, reduced_motion=rm)
+        async def page(vp, scheme='light', rm='no-preference', mobile=False):
+            ctx = await b.new_context(viewport=vp, color_scheme=scheme, device_scale_factor=1, reduced_motion=rm, is_mobile=mobile, has_touch=mobile)
             pg = await ctx.new_page(); errs = []
             pg.on('pageerror', lambda e: errs.append('pageerror: ' + str(e)))
             pg.on('console', lambda m: errs.append(m.type + ': ' + m.text) if m.type in ('error', 'warning') else None)
@@ -23,11 +23,19 @@ async def run():
 
         # --- home, desktop
         ctx, pg, errs, posted = await page({'width': 1440, 'height': 900})
-        await pg.goto(BASE + '/', wait_until='load'); await pg.mouse.move(700, 400); await pg.wait_for_timeout(4000)  # a mouse move is the desktop wake signal for the 3D
+        await pg.goto(BASE + '/', wait_until='load'); await pg.mouse.move(700, 400); await pg.wait_for_timeout(2500)
         await pg.screenshot(path=str(OUT / 'home-desk-top.png'))
-        r = {'gl': await pg.evaluate('!!document.querySelector("#c.on")'), 'sw': await pg.evaluate('document.documentElement.scrollWidth')}
-        await pg.click('[data-look="holly"]'); await pg.wait_for_timeout(1300)
-        await pg.screenshot(path=str(OUT / 'home-desk-holly.png'))
+        r = {'gl_before_ask': await pg.evaluate('!!document.querySelector("#c.on")'), 'sw': await pg.evaluate('document.documentElement.scrollWidth')}
+        await pg.click('#picker .dot[data-look="holly"]'); await pg.wait_for_timeout(900)
+        r['photo_holly'] = await pg.evaluate('document.querySelector(".ph.on").dataset.look'); r['price_holly'] = await pg.evaluate('document.querySelector("#prices").textContent')
+        await pg.screenshot(path=str(OUT / 'home-desk-holly-photo.png'))
+        await pg.click('#spinBtn'); await pg.wait_for_timeout(6000)
+        r['gl'] = await pg.evaluate('!!document.querySelector("#stage.live #c.on")')
+        await pg.screenshot(path=str(OUT / 'home-desk-holly-3d.png'))
+        await pg.mouse.move(720, 560); await pg.mouse.down(); await pg.mouse.move(900, 560, steps=8); await pg.mouse.up(); await pg.wait_for_timeout(500)
+        await pg.screenshot(path=str(OUT / 'home-desk-holly-3d-drag.png'))
+        await pg.click('#picker .dot[data-look="oat"]'); await pg.wait_for_timeout(1300)
+        await pg.screenshot(path=str(OUT / 'home-desk-oat-3d.png'))
         for y in range(0, 7000, 600):
             await pg.evaluate(f'window.scrollTo(0,{y})'); await pg.wait_for_timeout(110)
         await pg.evaluate('document.querySelector("#next").scrollIntoView()'); await pg.wait_for_timeout(900)
@@ -35,9 +43,9 @@ async def run():
         await pg.click('#submit'); await pg.wait_for_timeout(250)
         r['invalid_blocked'] = await pg.evaluate('document.querySelectorAll("[aria-invalid=true]").length')
         await pg.screenshot(path=str(OUT / 'home-desk-invalid.png'))
-        await pg.fill('#email', 'qa@example.com'); await pg.click('label[for=n3]'); await pg.click('#submit'); await pg.wait_for_timeout(1500)
+        await pg.fill('#email', 'qa@example.com'); await pg.click('label[for=n3]'); await pg.click('label[for=f3]'); await pg.click('#submit'); await pg.wait_for_timeout(1500)
         r['ok'] = await pg.evaluate('document.querySelector("#ok").classList.contains("on")')
-        r['share'] = await pg.evaluate('document.querySelector("#sharelink").textContent')
+        r['share'] = await pg.evaluate('document.querySelector("#sharelink").textContent'); r['okpick'] = await pg.evaluate('document.querySelector("#okpick").textContent')
         r['pin'] = await pg.evaluate('document.querySelector("#pinBtn").href')
         await pg.screenshot(path=str(OUT / 'home-desk-done.png'))
         await pg.click('#faqwrap details:nth-of-type(2) summary'); await pg.wait_for_timeout(700)
@@ -61,12 +69,15 @@ async def run():
 
         # --- collection, desktop
         ctx, pg, errs, posted = await page({'width': 1440, 'height': 900})
-        await pg.goto(BASE + '/collection/#kitty', wait_until='load'); await pg.wait_for_timeout(4500)
-        r = {'name': await pg.evaluate('document.querySelector("#look .name").textContent'), 'gl': await pg.evaluate('!!document.querySelector("#c.on")'), 'sw': await pg.evaluate('document.documentElement.scrollWidth')}
+        await pg.goto(BASE + '/collection/#kitty', wait_until='load'); await pg.wait_for_timeout(1500)
+        r0 = await pg.evaluate('!!document.querySelector("#c.on")')
+        await pg.mouse.move(400, 400); await pg.wait_for_timeout(5000)
+        r = {'gl_before_intent': r0, 'name': await pg.evaluate('document.querySelector("#look .name").textContent'), 'gl': await pg.evaluate('!!document.querySelector("#c.on")'), 'sw': await pg.evaluate('document.documentElement.scrollWidth')}
         await pg.screenshot(path=str(OUT / 'coll-desk-kitty.png'))
         await pg.click('#next'); await pg.wait_for_timeout(1200)
         await pg.click('[data-mode="kit"]'); await pg.wait_for_timeout(1400)
-        await pg.click('[data-ring="match"]'); await pg.wait_for_timeout(800)
+        await pg.click('[data-fin="graphite"]'); await pg.wait_for_timeout(900)
+        r['vote_href'] = await pg.evaluate('document.querySelector("#voteBtn").getAttribute("href")')
         r['hash'] = await pg.evaluate('location.hash')
         await pg.screenshot(path=str(OUT / 'coll-desk-butter-kit.png'))
         await pg.keyboard.press('ArrowRight'); await pg.wait_for_timeout(1200)
@@ -74,11 +85,15 @@ async def run():
         r['errors'] = errs; report['coll_desk'] = r; await ctx.close()
 
         # --- collection, phone
-        ctx, pg, errs, posted = await page({'width': 390, 'height': 844})
-        await pg.goto(BASE + '/collection/', wait_until='load'); await pg.wait_for_timeout(3500)
+        ctx, pg, errs, posted = await page({'width': 390, 'height': 844}, mobile=True)
+        await pg.goto(BASE + '/collection/', wait_until='load'); await pg.wait_for_timeout(2000)
         await pg.screenshot(path=str(OUT / 'coll-phone.png'))
+        ask = await pg.evaluate('document.querySelector("#stage").classList.contains("ask")+" "+document.querySelector("#hint").textContent')
+        await pg.evaluate('document.querySelector(".fin [data-fin=cloud]")&&document.querySelector(".fin [data-fin=cloud]").click()'); await pg.wait_for_timeout(6000)
+        tapped = {'gl': await pg.evaluate('!!document.querySelector("#c.on")'), 'mode': await pg.evaluate('document.querySelector("[data-mode=kit]").getAttribute("aria-pressed")')}
+        await pg.screenshot(path=str(OUT / 'coll-phone-3d.png'))
         await pg.evaluate('document.querySelector("#rail").scrollTo({left:document.querySelectorAll(".lk")[3].offsetLeft-60})'); await pg.wait_for_timeout(1600)
-        r = {'after_swipe': await pg.evaluate('document.querySelector("#look .name").textContent'), 'sw': await pg.evaluate('document.documentElement.scrollWidth')}
+        r = {'ask': ask, 'after_finish_tap': tapped, 'after_swipe': await pg.evaluate('document.querySelector("#look .name").textContent'), 'sw': await pg.evaluate('document.documentElement.scrollWidth')}
         await pg.screenshot(path=str(OUT / 'coll-phone-swipe.png'))
         await pg.screenshot(path=str(OUT / 'coll-phone-full.png'), full_page=True)
         r['errors'] = errs; report['coll_phone'] = r; await ctx.close()
@@ -95,7 +110,7 @@ async def run():
         ctx, pg, errs, posted = await page({'width': 1280, 'height': 800}, rm='reduce')
         await pg.goto(BASE + '/', wait_until='load'); await pg.wait_for_timeout(2500)
         await pg.evaluate('window.scrollTo(0,1600)'); await pg.wait_for_timeout(400)
-        report['reduced'] = {'hidden_rv': await pg.evaluate('[...document.querySelectorAll(".rv")].filter(e=>getComputedStyle(e).opacity==="0").length'), 'errors': errs}
+        report['reduced'] = {'hidden': await pg.evaluate('[...document.querySelectorAll("main *")].filter(e=>getComputedStyle(e).opacity==="0"&&e.offsetParent).map(e=>e.className).slice(0,5)'), 'errors': errs}
         await ctx.close()
         await b.close()
         print(json.dumps(report, indent=1)[:6000])

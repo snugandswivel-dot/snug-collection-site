@@ -35,15 +35,6 @@ if(hdr){ var onScroll=function(){ hdr.classList.toggle('scrolled',window.scrollY
 /* mark the current page in the nav */
 document.querySelectorAll('.links a').forEach(function(a){ if(a.getAttribute('href')===location.pathname) a.setAttribute('aria-current','page'); });
 
-/* reveal on scroll: only elements that start below the fold are hidden, so nothing is lost if JS fails */
-if(!RM&&'IntersectionObserver' in window){
-  var io=new IntersectionObserver(function(ents){ ents.forEach(function(en){ if(en.isIntersecting){ var el=en.target; el.classList.remove('pre'); el.classList.add('in'); io.unobserve(el); } }); },{rootMargin:'0px 0px -6% 0px',threshold:.06});
-  /* read every position first, then write, so the browser lays out the page once */
-  var els=Array.prototype.slice.call(document.querySelectorAll('.rv')), vh=window.innerHeight*0.9;
-  var below=els.map(function(el){ return el.getBoundingClientRect().top>vh; });
-  els.forEach(function(el,i){ if(below[i]){ el.classList.add('pre'); io.observe(el); } });
-}
-
 /* contact form */
 var cbtn=$('contactBtn'), cform=$('contact');
 if(cbtn&&cform){
