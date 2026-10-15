@@ -38,6 +38,9 @@ def tokens():
         'LEGAL_NAME': html.escape(cfg['legal_name']), 'LEGAL_LINE': html.escape(cfg['legal_line']),
         'UPDATED': cfg['updated'], 'YEAR': cfg['year'],
         'WAITLIST': cfg['waitlist_endpoint'], 'CONTACT': cfg['contact_endpoint'],
+        'ANALYTICS_LINE': ('We use Cloudflare Web Analytics to count page views. It does not use cookies and, according to Cloudflare, does not collect visitors\u2019 personal data.'
+                           if cfg.get('analytics_token') else 'We don\u2019t run any analytics right now. If we add Cloudflare Web Analytics to count page views, we\u2019ll say so here; it does not use cookies.'),
+        'ANALYTICS_PROVIDER': ', and privacy-friendly page-view counts' if cfg.get('analytics_token') else '',
     }
 
 def emit_asset(rel, data):
@@ -116,7 +119,7 @@ urls = [('/', '1.0'), ('/collection/', '0.8'), ('/privacy/', '0.3'), ('/terms/',
 
 endpoint_origin = re.match(r'https://[^/]+', cfg['waitlist_endpoint']).group(0)
 csp = ("default-src 'self'; script-src 'self' https://static.cloudflareinsights.com; "
-       "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https://i.pinimg.com; font-src 'self'; "
+       "style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; "
        "connect-src 'self' %s https://cloudflareinsights.com; form-action 'self' %s; frame-src %s; "
        "frame-ancestors 'none'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests") % ((endpoint_origin,) * 3)
 (DIST / '_headers').write_text(

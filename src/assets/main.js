@@ -49,22 +49,22 @@ function shareURL(){ return location.origin+'/?ref='+code; }
 var form=$('wl'), err=$('err'), okBox=$('ok'), btn=$('submit'), email=$('email');
 if(form){
   email.addEventListener('input',function(){ if(email.getAttribute('aria-invalid')) SS.setErr(email,$('email-err'),SS.EMAIL.test(email.value.trim())?'':'Enter an email like you@example.com'); });
-  var payload=function(){ var fd=new FormData(form); return {email:String(fd.get('email')||'').trim(),interest:fd.getAll('interest'),look:fd.get('look')||'',next_look:fd.get('next_look')||'',finish:fd.get('finish')||'',room:fd.get('room')||'',hv_status:fd.get('hv_status')||'',hv_color:fd.get('hv_color')||'',price_ok:fd.get('price_ok')||'',note:String(fd.get('note')||'').slice(0,500),ref:ref,share_code:code,t:Math.round(performance.now()-SS.T0),website:fd.get('website')||''}; };
+  var payload=function(){ var fd=new FormData(form); return {email:String(fd.get('email')||'').trim(),interest:fd.getAll('interest'),look:fd.get('look')||'',next_look:fd.get('next_look')||'',finish:fd.get('finish')||'',room:fd.get('room')||'',hv_status:fd.get('hv_status')||'',hv_color:fd.get('hv_color')||'',price_ok:fd.get('price_ok')||'',note:String(fd.get('note')||'').slice(0,500),ref:ref,share_code:code,source:(SS.SRC||{}).source||'',landing:(SS.SRC||{}).landing||'',t:Math.round(performance.now()-SS.T0),website:fd.get('website')||''}; };
   var done=function(){
-    var o=payload(), s='Your vote for the first drop: '+(NAMES[o.look]||'');
-    if(o.next_look&&NAMES[o.next_look]) s+='. Next: '+NAMES[o.next_look];
-    if(o.finish&&FIN[o.finish]) s+='. Base: '+FIN[o.finish];
-    $('okpick').textContent=s+'.';
+    var o=payload(), parts=[];
+    if(NAMES[o.look]) parts.push('First drop: '+NAMES[o.look]);
+    if(o.next_look&&NAMES[o.next_look]) parts.push('Next: '+NAMES[o.next_look]);
+    if(o.finish&&FIN[o.finish]) parts.push('Base: '+FIN[o.finish]);
+    $('okpick').textContent=parts.length?'Your votes. '+parts.join('. ')+'.':'';
     form.hidden=true; okBox.classList.add('on'); $('sharelink').textContent=shareURL();
     $('pinBtn').href='https://www.pinterest.com/pin/create/button/?url='+encodeURIComponent(shareURL())+'&media='+encodeURIComponent(location.origin+'/og.jpg')+'&description='+encodeURIComponent('Soft covers and a swivel base for the new Apple HomeView, from The Snug Collection');
     okBox.scrollIntoView({behavior:RM?'auto':'smooth',block:'center'}); okBox.focus({preventScroll:true});
     try{ localStorage.setItem('ss_joined','1'); }catch(e){}
   };
   form.addEventListener('submit',function(e){ e.preventDefault(); err.classList.remove('on');
-    var o=payload(), bad=false, ie=$('interest-err');
+    var o=payload(), bad=false;
     if(!SS.EMAIL.test(o.email)){ SS.setErr(email,$('email-err'),'Enter an email like you@example.com'); bad=true; } else SS.setErr(email,$('email-err'),'');
-    if(!o.interest.length){ ie.textContent='Pick at least one.'; ie.classList.add('on'); var m=ie.closest('details'); if(m) m.open=true; bad=true; } else { ie.textContent=''; ie.classList.remove('on'); }
-    if(bad){ email.getAttribute('aria-invalid')?email.focus():$('i1').focus(); return; }
+    if(bad){ email.focus(); return; }
     btn.disabled=true; btn.textContent='Joining…';
     SS.post(form.getAttribute('data-endpoint'),o,done,function(){ err.classList.add('on'); btn.disabled=false; btn.textContent='Join the waitlist'; });
   });
@@ -87,7 +87,6 @@ if(stage){
     Object.keys(photos).forEach(function(k){ photos[k].classList.toggle('on',k===n); });
     pname.textContent=NAMES[n]; if(PRICE[n]) prices.innerHTML=PRICE[n];
     if(show) show(n,false);
-    if(fromUser) pickLook(n);
   };
   picker.querySelectorAll('.dot').forEach(function(d){ d.addEventListener('click',function(){ setLook(d.getAttribute('data-look'),true); }); });
   if(qs&&qs.get('look')&&photos[qs.get('look')]) setLook(qs.get('look'),false);

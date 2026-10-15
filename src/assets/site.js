@@ -26,7 +26,18 @@ function post(url,o,onOk,onFail){
       }catch(e){ onFail(); }
     });
 }
-window.SS={post:post,setErr:setErr,EMAIL:EMAIL,RM:RM,T0:T0};
+/* first touch: the utm tags and referring site that first brought this browser here, so signups can be traced to a channel */
+var SRC={source:'',landing:location.pathname};
+try{
+  var st=localStorage.getItem('ss_src');
+  if(st){ SRC.source=st; SRC.landing=localStorage.getItem('ss_land')||SRC.landing; }
+  else {
+    var q=new URL(location.href).searchParams, u=['utm_source','utm_medium','utm_campaign'].map(function(k){ return (q.get(k)||'').slice(0,30); }).join('/');
+    var rh=''; if(document.referrer){ rh=new URL(document.referrer).hostname; if(rh===location.hostname) rh=''; }
+    if(u!=='//'||rh){ SRC.source=(u!=='//'?u:'')+(rh?'|ref:'+rh:''); localStorage.setItem('ss_src',SRC.source); localStorage.setItem('ss_land',SRC.landing); }
+  }
+}catch(e){}
+window.SS={post:post,setErr:setErr,EMAIL:EMAIL,RM:RM,T0:T0,SRC:SRC};
 
 /* header shadow once the page scrolls */
 var hdr=$('hdr');

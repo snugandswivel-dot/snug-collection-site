@@ -15,7 +15,7 @@ var DATA=[
  {key:'holly',name:'Holly Bow',status:'Launch look · holiday limited run',color:'#9B2F3A',
   pitch:'Cranberry with an ivory bow for the holidays. The bow clips off in January and the frame stays.',
   price:'<b>$49</b> the set with base · <b>$34</b> cover only',
-  spec:[['Frame','Puff edge, cranberry silicone'],['Sweater','Ivory silicone, rolled lip'],['Topper','Molded ivory bow, clear of the camera'],['Charms','Ornament and gold star']],
+  spec:[['Frame','Puff edge, cranberry silicone'],['Sweater','Ivory silicone, rolled lip'],['Topper','Molded ivory bow, placed to clear the camera'],['Charms','Ornament and gold star']],
   vote:'/?look=holly#waitlist',voteLabel:'Vote for Holly Bow'},
  {key:'oat',name:'Oat Puff',status:'Launch look',color:'#E3D6C3',
   pitch:'Warm oat, frame and sweater. Quiet enough for a shared counter, soft enough to notice.',
