@@ -1,4 +1,4 @@
-/* The Snug Collection 3D fitting room: six looks, swipe rail, drag to turn, base finishes. */
+/* The Snug Collection 3D fitting room: nine looks (six silicone, three wood), swipe rail, drag to turn, base finishes. */
 (function(){
 'use strict';
 var $=function(id){ return document.getElementById(id); };
@@ -9,17 +9,17 @@ var FINISHES={cloud:{name:'Cloud',sw:'#F3F1EE',color:'#F3F1EE',m:0,r:0.32,cc:0.9
 var DATA=[
  {key:'blush',name:'Blush Puff',status:'Launch look',color:'#D9A3A6',
   pitch:'Soft blush, head to toe: a puffy frame, a smooth sweater and a pearl strand charm.',
-  price:'<b>$32</b> cover · <b>$72</b> with the base',
+  price:'<b>$49</b> the set with base · <b>$34</b> cover only',
   spec:[['Frame','Puff edge, blush silicone'],['Sweater','Blush silicone, rolled lip'],['Charms','Pearl strand and pearl heart']],
   vote:'/?look=blush#waitlist',voteLabel:'Vote for Blush Puff'},
  {key:'holly',name:'Holly Bow',status:'Launch look · holiday limited run',color:'#9B2F3A',
   pitch:'Cranberry with an ivory bow for the holidays. The bow clips off in January and the frame stays.',
-  price:'<b>$36</b> cover · <b>$76</b> with the base',
+  price:'<b>$49</b> the set with base · <b>$34</b> cover only',
   spec:[['Frame','Puff edge, cranberry silicone'],['Sweater','Ivory silicone, rolled lip'],['Topper','Molded ivory bow, clear of the camera'],['Charms','Ornament and gold star']],
   vote:'/?look=holly#waitlist',voteLabel:'Vote for Holly Bow'},
  {key:'oat',name:'Oat Puff',status:'Launch look',color:'#E3D6C3',
   pitch:'Warm oat, frame and sweater. Quiet enough for a shared counter, soft enough to notice.',
-  price:'<b>$32</b> cover · <b>$72</b> with the base',
+  price:'<b>$49</b> the set with base · <b>$34</b> cover only',
   spec:[['Frame','Puff edge, oat silicone'],['Sweater','Oat silicone, rolled lip'],['Charms','Add your own']],
   vote:'/?look=oat#waitlist',voteLabel:'Vote for Oat Puff'},
  {key:'kitty',name:'Cocoa Kitty',status:'Next-drop candidate',color:'#8B6753',
@@ -36,17 +36,32 @@ var DATA=[
   pitch:'Pearl beads ring the frame, so it ships already accessorized.',
   price:'Price set after the vote',
   spec:[['Frame','Puff edge ringed with pearl beads'],['Sweater','Cream silicone'],['Charms','None needed']],
-  vote:'/?next=pearl#waitlist',voteLabel:'Vote to make it next'}
+  vote:'/?next=pearl#waitlist',voteLabel:'Vote to make it next'},
+ {key:'oak',name:'Oak & Oat',status:'Wood · in development',color:'#C49A68',wood:true,
+  pitch:'A thin face of real white oak set into an oat silicone frame. Slips on like the soft covers and feels like wood where you touch it.',
+  price:'<b>$59</b> the set with base · <b>$44</b> cover only',
+  spec:[['Face','White oak, 3 mm, oiled'],['Frame','Oat silicone, grips the screen edge'],['Sweater','Oat silicone'],['Base','Oak sides and top']],
+  vote:'/?next=oak#waitlist',voteLabel:'Vote to make it next'},
+ {key:'walnut',name:'Walnut & Cocoa',status:'Wood · in development',color:'#6B4A33',wood:true,
+  pitch:'American walnut on a cocoa silicone frame. The darker one, for walnut cabinets and warm kitchens.',
+  price:'<b>$59</b> the set with base · <b>$44</b> cover only',
+  spec:[['Face','American walnut, 3 mm, oiled'],['Frame','Cocoa silicone, grips the screen edge'],['Sweater','Cocoa silicone'],['Base','Walnut sides and top']],
+  vote:'/?next=walnut#waitlist',voteLabel:'Vote to make it next'},
+ {key:'maple',name:'Maple & Sage',status:'Wood · in development',color:'#D9BE93',wood:true,
+  pitch:'Pale maple on a sage silicone frame. A cottage kitchen in one piece.',
+  price:'<b>$59</b> the set with base · <b>$44</b> cover only',
+  spec:[['Face','Hard maple, 3 mm, oiled'],['Frame','Sage silicone, grips the screen edge'],['Sweater','Sage silicone'],['Base','Maple sides and top']],
+  vote:'/?next=maple#waitlist',voteLabel:'Vote to make it next'}
 ];
 var N=DATA.length, idx=-1, mode='frame', finish='aluminum', finTouched=false, G3=null;
 var room=$('room'), rail=$('rail'), lookEl=$('look'), hint=$('hint'), still=$('still'), stageEl=$('stage'), badge=$('badge');
 var cards=Array.prototype.slice.call(rail.querySelectorAll('.lk'));
-var stills=['{{A:img/photo-blush.webp}}','{{A:img/photo-holly.webp}}','{{A:img/photo-oat.webp}}','{{A:img/photo-kitty.webp}}','{{A:img/photo-butter.webp}}','{{A:img/photo-pearl.webp}}'];
-var ALTS=['a soft pink silicone frame on a white counter','a cranberry silicone frame with an ivory bow','a cream silicone frame','a cocoa cloud-edged frame with cat ears','a butter-yellow wave-edged frame','a cream frame ringed with pearl beads'];
-function voteHref(d){ return finTouched?d.vote.replace('#','&finish='+finish+'#'):d.vote; }
+var stills=['{{A:img/photo-blush.webp}}','{{A:img/photo-holly.webp}}','{{A:img/photo-oat.webp}}','{{A:img/photo-kitty.webp}}','{{A:img/photo-butter.webp}}','{{A:img/photo-pearl.webp}}','{{A:img/look-oak.webp}}','{{A:img/look-walnut.webp}}','{{A:img/look-maple.webp}}'];
+var ALTS=['a soft pink silicone frame on a white counter','a cranberry silicone frame with an ivory bow','a cream silicone frame','a cocoa cloud-edged frame with cat ears','a butter-yellow wave-edged frame','a cream frame ringed with pearl beads','an oak-faced frame with an oat silicone rim, oat sweater and oak base','a walnut-faced frame with a cocoa silicone rim, cocoa sweater and walnut base','a maple-faced frame with a sage silicone rim, sage sweater and maple base'];
+function voteHref(d){ return (finTouched&&!d.wood)?d.vote.replace('#','&finish='+finish+'#'):d.vote; }
 
 function lookHTML(d){
-  var fin='<div class="finrow"><dt>Base finish</dt><dd><div class="fin" role="group" aria-label="Base finish">'+Object.keys(FINISHES).map(function(k){ var f=FINISHES[k]; return '<button type="button" data-fin="'+k+'" aria-pressed="'+(finish===k)+'" style="--rc:'+f.sw+'"><i></i>'+f.name+'</button>'; }).join('')+'</div></dd></div>';
+  var fin=d.wood?'':'<div class="finrow"><dt>Base finish</dt><dd><div class="fin" role="group" aria-label="Base finish">'+Object.keys(FINISHES).map(function(k){ var f=FINISHES[k]; return '<button type="button" data-fin="'+k+'" aria-pressed="'+(finish===k)+'" style="--rc:'+f.sw+'"><i></i>'+f.name+'</button>'; }).join('')+'</div></dd></div>';
   return '<h2 class="name">'+d.name+'</h2><span class="status">'+d.status+'</span>'+
     '<p class="pitch">'+d.pitch+'</p>'+
     '<p class="price">'+d.price+'</p>'+
@@ -93,6 +108,7 @@ window.addEventListener('hashchange',function(){ var h=location.hash.slice(1); D
 /* ---------- 3D ---------- */
 function initGL(){
   var T=window.THREE, SV=window.SnugViewer; if(!T||!SV) return null;
+  SV.onChange=function(){ dirty=true; };
   var canvas=$('c'), stage=$('stage'), renderer;
   try{ renderer=new T.WebGLRenderer({canvas:canvas,antialias:true,alpha:true}); }catch(e){ return null; }
   var rad=T.MathUtils.degToRad;

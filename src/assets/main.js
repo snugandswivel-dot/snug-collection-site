@@ -3,12 +3,13 @@
 'use strict';
 var $=function(id){ return document.getElementById(id); };
 var SS=window.SS||{}, RM=SS.RM;
-var NAMES={blush:'Blush Puff',holly:'Holly Bow',oat:'Oat Puff',kitty:'Cocoa Kitty',butter:'Butter Wave',pearl:'Pearl Bobbin'};
+var NAMES={blush:'Blush Puff',holly:'Holly Bow',oat:'Oat Puff',kitty:'Cocoa Kitty',butter:'Butter Wave',pearl:'Pearl Bobbin',oak:'Oak & Oat',walnut:'Walnut & Cocoa',maple:'Maple & Sage'};
 var FIN={cloud:'Cloud',aluminum:'Aluminum',graphite:'Graphite'};
 /* the base finish each set is photographed with; the 3D matches it */
 var SETFIN={blush:'cloud',holly:'aluminum',oat:'graphite'};
 var FINMAT={cloud:{color:'#F3F1EE',m:0,r:0.32,cc:0.9,env:0.9},aluminum:{color:'#D3D4D7',m:0.95,r:0.28,cc:0,env:1.6},graphite:{color:'#2C2C30',m:0.8,r:0.4,cc:0,env:1.3}};
-var PRICE={blush:'<b>$32</b> cover · <b>$49</b> base · <b>$72</b> the set',holly:'<b>$36</b> cover · <b>$49</b> base · <b>$76</b> the set',oat:'<b>$32</b> cover · <b>$49</b> base · <b>$72</b> the set'};
+/* one price for every launch set; the set is the offer, single pieces are there for people who only want one */
+var SETPRICE='<b>$49</b> the set, free shipping · cover or base alone $34', PRICE={blush:SETPRICE,holly:SETPRICE,oat:SETPRICE};
 
 /* ---------- FAQ: animated open and close ---------- */
 var faq=$('faqwrap');

@@ -57,7 +57,25 @@ function ruffle(out,mat){ var n=out.length, nm=normals2(out), M=12, W=12, flutes
   var g=new T.BufferGeometry(); g.setAttribute('position',new T.Float32BufferAttribute(pos,3)); g.setIndex(idx); g.computeVertexNormals(); var m=mat.clone(); m.side=T.DoubleSide; return new T.Mesh(g,m); }
 function bobbins(G,out,mat){ var nm=normals2(out), n=out.length, acc=0, step=9.2, last=null; for(var i=0;i<n;i++){ if(last) acc+=Math.hypot(out[i][0]-last[0],out[i][1]-last[1]); last=out[i]; if(acc>=step||i===0){ acc=0; var b=new T.Mesh(new T.SphereGeometry(4.3,18,12),mat); b.position.set(out[i][0]+nm[i][0]*(TR+2.2),out[i][1]+nm[i][1]*(TR+2.2),0); G.add(b); } } }
 function cornerPoint(out,sx,sy){ var best=null,bv=-1e9; out.forEach(function(p){ var v=sx*p[0]+sy*p[1]; if(v>bv){ bv=v; best=p; } }); var l=Math.hypot(best[0],best[1]); return [best[0]+best[0]/l*(TR+1.5), best[1]+best[1]/l*(TR+1.5)]; }
-function buildFrame(L,opts){ opts=opts||{};
+/* wood: grain textures are baked image files, loaded on first use; the page redraws when they arrive */
+var WOODTEX={oak:['{{A:img/wood-oak-map.webp}}','{{A:img/wood-oak-bump.webp}}'],walnut:['{{A:img/wood-walnut-map.webp}}','{{A:img/wood-walnut-bump.webp}}'],maple:['{{A:img/wood-maple-map.webp}}','{{A:img/wood-maple-bump.webp}}']};
+var WOODTINT={oak:'#B98E5E',walnut:'#5A3A26',maple:'#DCC197'}, WT={}, woodWait={};
+function woodTex(key,cb){ if(WT[key]){ cb(WT[key]); return; } var q=woodWait[key]=woodWait[key]||[]; q.push(cb); if(q.length>1) return;
+  var got={}, n=0, ld=new T.TextureLoader(), done=function(){ if(++n<2) return; WT[key]=got; q.forEach(function(f){ f(got); }); woodWait[key]=[]; var sv=global.SnugViewer; if(sv&&sv.onChange) sv.onChange(); };
+  ld.load(WOODTEX[key][0],function(t){ t.encoding=T.sRGBEncoding; t.wrapS=t.wrapT=T.RepeatWrapping; t.anisotropy=8; got.map=t; done(); });
+  ld.load(WOODTEX[key][1],function(t){ t.wrapS=t.wrapT=T.RepeatWrapping; got.bump=t; done(); }); }
+function woodMat(key,o){ o=o||{}; var m=new T.MeshPhysicalMaterial({color:lin(WOODTINT[key]),roughness:0.55,clearcoat:0.1,clearcoatRoughness:0.45,envMapIntensity:0.42});
+  woodTex(key,function(t){ var map=t.map.clone(), bump=t.bump.clone(); map.needsUpdate=bump.needsUpdate=true; map.repeat.set(o.rx||1/260,o.ry||1/140); bump.repeat.copy(map.repeat);
+    if(o.off){ map.offset.set(o.off[0],o.off[1]); bump.offset.copy(map.offset); } m.map=map; m.bumpMap=bump; m.bumpScale=0.25; m.color.set(0xffffff); m.needsUpdate=true; });
+  return m; }
+function rrShape(w,h,r,path){ var s=path?new T.Path():new T.Shape(), x=-w/2, y=-h/2; s.moveTo(x+r,y); s.lineTo(x+w-r,y); s.quadraticCurveTo(x+w,y,x+w,y+r); s.lineTo(x+w,y+h-r); s.quadraticCurveTo(x+w,y+h,x+w-r,y+h); s.lineTo(x+r,y+h); s.quadraticCurveTo(x,y+h,x,y+h-r); s.lineTo(x,y+r); s.quadraticCurveTo(x,y,x+r,y); return s; }
+function buildWoodFrame(L){ var G=new T.Group();
+  var bs=rrShape(168,168,33); bs.holes.push(rrShape(132,132,16,true));
+  var base=new T.Mesh(new T.ExtrudeGeometry(bs,{depth:8,bevelEnabled:true,bevelThickness:2.5,bevelSize:2.5,bevelSegments:6,curveSegments:24}),pmat(L.color,{r:0.72,env:0.55})); base.position.z=-6.5; G.add(base);
+  var ws=rrShape(163,163,30); ws.holes.push(rrShape(137,137,18,true));
+  var ring=new T.Mesh(new T.ExtrudeGeometry(ws,{depth:2.2,bevelEnabled:true,bevelThickness:0.5,bevelSize:0.5,bevelSegments:2,curveSegments:24}),[woodMat(L.wood,{off:[0.31,0.2]}),woodMat(L.wood,{rx:1/60,ry:1/20})]);
+  ring.position.z=3.1; G.add(ring); return sh(G); }
+function buildFrame(L,opts){ opts=opts||{}; if(L.wood) return buildWoodFrame(L);
   var G=new T.Group(), fm=pmat(L.color,{r:0.72,env:0.55,bump:TEX.soft([3,3]),bs:0.2});
   var kind=L.shape, out=outline(kind==='ruffle'||kind==='bobbin'?'puff':kind), hole=holePath(64,7), holeB=holePath(66.5,0);
   var pm=fm.clone(); pm.side=T.DoubleSide;
@@ -114,7 +132,11 @@ var LOOKS={
   oat:{sku:'SS-CV-OAT-01',name:'Oat Puff',shape:'puff',color:'#E3D6C3',sleeve:'boucle',sleeveColor:'#EAE1D2',baseColor:'#C9CBD0',charms:[]},
   kitty:{sku:'SS-CV-KITTY-02',name:'Cocoa Kitty',shape:'cloud',color:'#8B6753',sleeve:'boucle',baseColor:'#C9CBD0',topper:'ears',inner:'#E3B9B3',charms:[{k:'heart',a:['#E3B9B3'],drop:3,dx:1.2,dz:-3.4}]},
   butter:{sku:'SS-CV-BUTTER-02',name:'Butter Wave',shape:'wave',color:'#EED27C',sleeve:'rib',baseColor:'#C9CBD0',charms:[{k:'flower',a:['#fffaf0','#e7b84a'],drop:3,dx:1.2,dz:-3.4},{k:'pearls',a:[3],drop:12,dx:7,dz:3.4}]},
-  pearl:{sku:'SS-CV-PEARL-02',name:'Pearl Bobbin',shape:'bobbin',color:'#F2E9DB',sleeve:'eyelet',holeColor:'#cdbfa8',baseColor:'#C9CBD0',trim:'pearl',charms:[]}
+  pearl:{sku:'SS-CV-PEARL-02',name:'Pearl Bobbin',shape:'bobbin',color:'#F2E9DB',sleeve:'eyelet',holeColor:'#cdbfa8',baseColor:'#C9CBD0',trim:'pearl',charms:[]},
+  /* wood looks: a 3 mm real-wood face set into a silicone frame; sweater stays silicone; the base gets wood sides and top */
+  oak:{sku:'SS-WD-OAK-03',name:'Oak & Oat',shape:'puff',wood:'oak',color:'#E6DCCB',sleeve:'smooth',sleeveColor:'#E6DCCB',baseColor:'#C9CBD0',charms:[]},
+  walnut:{sku:'SS-WD-WALNUT-03',name:'Walnut & Cocoa',shape:'puff',wood:'walnut',color:'#6B5547',sleeve:'smooth',sleeveColor:'#6B5547',baseColor:'#C9CBD0',charms:[]},
+  maple:{sku:'SS-WD-MAPLE-03',name:'Maple & Sage',shape:'puff',wood:'maple',color:'#93A085',sleeve:'smooth',sleeveColor:'#93A085',baseColor:'#C9CBD0',charms:[]}
 };
 /* scene helpers */
 function makeScene(renderer){
@@ -134,7 +156,10 @@ function makeScene(renderer){
 function kit(L,opts){ opts=opts||{}; var G=new T.Group();
   var F=buildFrame(L,{openBack:true}); var tilt=opts.tilt!=null?opts.tilt:12; F.rotation.x=-rad(tilt); F.position.set(0,84+ (L.topper==='ears'?0:0),0); F.position.y=84*Math.cos(rad(tilt))+TR*Math.sin(rad(tilt))+0.5; G.add(F);
   if(opts.sweater!==false){ var W=buildSweater(L); W.position.set(opts.sweaterX!=null?opts.sweaterX:92,0,opts.sweaterZ!=null?opts.sweaterZ:-52); G.add(W); }
-  if(opts.base!==false){ var B=buildBase(opts.ring?Object.assign({},L,{baseColor:opts.ring}):L); B.position.set(opts.baseX!=null?opts.baseX:-96,0,opts.baseZ!=null?opts.baseZ:70); G.add(B); G.userData.ringMat=B.userData.mat; }
+  if(opts.base!==false){ var B=buildBase(opts.ring?Object.assign({},L,{baseColor:opts.ring}):L); B.position.set(opts.baseX!=null?opts.baseX:-96,0,opts.baseZ!=null?opts.baseZ:70); G.add(B); G.userData.ringMat=B.userData.mat;
+    if(L.wood){ var bm=B.userData.mat, side=woodMat(L.wood,{rx:1.6,ry:0.07,off:[0.1,0.3]}), top=woodMat(L.wood,{rx:0.42,ry:0.42,off:[0.3,0.2]});
+      B.traverse(function(o){ if(o.isMesh&&o.material===bm){ var gt=o.geometry.type; o.material=(gt==='RingGeometry'||gt==='TorusGeometry'||(gt==='CylinderGeometry'&&o.geometry.parameters.height<2))?top:side; } });
+      G.userData.ringMat=null; } }
   return G; }
 global.SnugViewer={LOOKS:LOOKS,buildFrame:buildFrame,buildSweater:buildSweater,buildBase:buildBase,kit:kit,makeScene:makeScene,TR:TR,lin:lin};
 })(window);

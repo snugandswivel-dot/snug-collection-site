@@ -2,32 +2,35 @@
 <html lang="en">
 <head>
 {{HEAD}}
-<title>Six looks in 3D · The Snug Collection</title>
-<meta name="description" content="Turn all six Snug Collection covers for Apple HomeView in 3D: Blush Puff, Holly Bow and Oat Puff launch first; vote for Cocoa Kitty, Butter Wave or Pearl Bobbin next. Try the base in Cloud, Aluminum or Graphite.">
+<title>Nine looks in 3D · The Snug Collection</title>
+<meta name="description" content="Turn all nine Snug Collection covers for Apple HomeView in 3D: Blush Puff, Holly Bow and Oat Puff launch first; vote for what comes next, including real-wood covers in oak, walnut and maple. Try the base in Cloud, Aluminum or Graphite.">
 <link rel="canonical" href="{{ORIGIN}}/collection/">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="The Snug Collection">
 <meta property="og:url" content="{{ORIGIN}}/collection/">
-<meta property="og:title" content="Six looks in 3D · The Snug Collection">
-<meta property="og:description" content="Six soft covers for the new Apple HomeView. Spin them in 3D and vote on what we make next.">
+<meta property="og:title" content="Nine looks in 3D · The Snug Collection">
+<meta property="og:description" content="Soft silicone and real-wood covers for the new Apple HomeView. Spin them in 3D and vote on what we make next.">
 <meta property="og:image" content="{{ORIGIN}}/og-collection.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Six soft silicone frames: blush, holly red, oat, cocoa with cat ears, butter yellow and pearl-trimmed cream">
+<meta property="og:image:alt" content="Nine covers for Apple HomeView: six silicone frames and three with real oak, walnut and maple faces">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Six looks in 3D · The Snug Collection">
-<meta name="twitter:description" content="Six soft covers for the new Apple HomeView. Spin them in 3D and vote on what we make next.">
+<meta name="twitter:title" content="Nine looks in 3D · The Snug Collection">
+<meta name="twitter:description" content="Soft silicone and real-wood covers for the new Apple HomeView. Spin them in 3D and vote on what we make next.">
 <meta name="twitter:image" content="{{ORIGIN}}/og-collection.jpg">
 <link rel="preload" href="{{A:img/photo-blush.webp}}" as="image" type="image/webp" fetchpriority="high">
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"CollectionPage","name":"Six looks in 3D","url":"{{ORIGIN}}/collection/","isPartOf":{"@type":"WebSite","name":"The Snug Collection","url":"{{ORIGIN}}/"},
+{"@context":"https://schema.org","@type":"CollectionPage","name":"Nine looks in 3D","url":"{{ORIGIN}}/collection/","isPartOf":{"@type":"WebSite","name":"The Snug Collection","url":"{{ORIGIN}}/"},
 "mainEntity":{"@type":"ItemList","itemListElement":[
 {"@type":"ListItem","position":1,"name":"Blush Puff","url":"{{ORIGIN}}/collection/#blush"},
 {"@type":"ListItem","position":2,"name":"Holly Bow","url":"{{ORIGIN}}/collection/#holly"},
 {"@type":"ListItem","position":3,"name":"Oat Puff","url":"{{ORIGIN}}/collection/#oat"},
 {"@type":"ListItem","position":4,"name":"Cocoa Kitty","url":"{{ORIGIN}}/collection/#kitty"},
 {"@type":"ListItem","position":5,"name":"Butter Wave","url":"{{ORIGIN}}/collection/#butter"},
-{"@type":"ListItem","position":6,"name":"Pearl Bobbin","url":"{{ORIGIN}}/collection/#pearl"}]}}
+{"@type":"ListItem","position":6,"name":"Pearl Bobbin","url":"{{ORIGIN}}/collection/#pearl"},
+{"@type":"ListItem","position":7,"name":"Oak & Oat","url":"{{ORIGIN}}/collection/#oak"},
+{"@type":"ListItem","position":8,"name":"Walnut & Cocoa","url":"{{ORIGIN}}/collection/#walnut"},
+{"@type":"ListItem","position":9,"name":"Maple & Sage","url":"{{ORIGIN}}/collection/#maple"}]}}
 </script>
 <style>
 /* Layout: a one-screen fitting room under the header. Stage left with the look rail beneath it, the look's details on the right; stacks on phones. */
@@ -100,7 +103,7 @@ dl.spec{margin:0;border-top:1px solid var(--line)}
   .rail{grid-auto-flow:row;grid-template-columns:repeat(6,minmax(0,1fr));overflow:visible;gap:8px}
   .lk{grid-template-columns:1fr;justify-items:center;text-align:center;padding:8px 6px 9px;gap:7px}
   .lk img{width:100%;height:auto;aspect-ratio:1;max-width:72px;border-radius:14px}
-  .lk .nm{font-size:13.5px}
+  .lk .nm{font-size:13px;white-space:normal;line-height:1.2;text-align:center}
   .lk .st{display:none}
 }
 @media (max-width:899px){
@@ -149,15 +152,18 @@ dl.spec{margin:0;border-top:1px solid var(--line)}
 <button class="lk" type="button" data-i="3"><img src="{{A:img/thumb-kitty.webp}}" width="160" height="160" alt="" decoding="async"><span class="t"><span class="nm">Cocoa Kitty</span><span class="st">Vote for next</span></span></button>
 <button class="lk" type="button" data-i="4"><img src="{{A:img/thumb-butter.webp}}" width="160" height="160" alt="" decoding="async"><span class="t"><span class="nm">Butter Wave</span><span class="st">Vote for next</span></span></button>
 <button class="lk" type="button" data-i="5"><img src="{{A:img/thumb-pearl.webp}}" width="160" height="160" alt="" decoding="async"><span class="t"><span class="nm">Pearl Bobbin</span><span class="st">Vote for next</span></span></button>
+<button class="lk wood" type="button" data-i="6"><img src="{{A:img/thumb-oak.webp}}" width="160" height="160" alt="" decoding="async"><span class="t"><span class="nm">Oak &amp; Oat</span><span class="st">Wood · vote for next</span></span></button>
+<button class="lk wood" type="button" data-i="7"><img src="{{A:img/thumb-walnut.webp}}" width="160" height="160" alt="" decoding="async"><span class="t"><span class="nm">Walnut &amp; Cocoa</span><span class="st">Wood · vote for next</span></span></button>
+<button class="lk wood" type="button" data-i="8"><img src="{{A:img/thumb-maple.webp}}" width="160" height="160" alt="" decoding="async"><span class="t"><span class="nm">Maple &amp; Sage</span><span class="st">Wood · vote for next</span></span></button>
 </nav>
 
 <aside class="panel" id="panel" aria-live="polite">
-<h1>Six looks, in 3D</h1>
+<h1>Nine looks, in 3D</h1>
 <div id="look">
 <h2 class="name">Blush Puff</h2>
 <span class="status">Launch look</span>
 <p class="pitch">Soft blush, head to toe: a puffy frame, a smooth sweater and a pearl strand charm.</p>
-<p class="price"><b>$32</b> cover · <b>$72</b> with the base</p>
+<p class="price"><b>$49</b> the set with base · <b>$34</b> cover only</p>
 <div class="actions"><a class="btn" href="/?look=blush#waitlist">Vote for Blush Puff</a></div>
 </div>
 <p class="fine">3D renderings of our own designs, shown without the device. Planned prices may change before pre-orders open.</p>
@@ -166,7 +172,7 @@ dl.spec{margin:0;border-top:1px solid var(--line)}
 
 <section class="after"><div class="wrap">
 <h2>Three launch first. You pick what's next.</h2>
-<p class="lede">Join free, vote on the first drop and the next one, and get launch pricing before anyone else.</p>
+<p class="lede">Join free, vote on the first drop and the next one, and get first access when pre-orders open.</p>
 <a class="btn" href="/#waitlist">Join the waitlist</a>
 </div></section>
 </main>
