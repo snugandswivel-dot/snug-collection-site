@@ -19,7 +19,7 @@ a.ar{display:inline-block;margin-top:8px;padding:9px 14px;border-radius:999px;ba
 <h1>View a cover in your space</h1>
 <p>Internal test. Tap a button to place the cover and base on your counter at true size. iPhone opens AR Quick Look; Android opens Scene Viewer.</p>
 <div id="looks"></div>
-<p class="note">Shows our cover, sweater and base only. The device is not drawn. Models are scaled to Apple's published 14.55 cm display width.</p>
+<p class="note">Shows our frame, sweater and base at true size, with a plain grey slab standing in for the display so the frame reads in place. The device itself is not drawn. Scaled to Apple's published 14.55 cm display width.</p>
 <script>
 var looks=[['blush','Blush Puff'],['holly','Holly Bow'],['oat','Oat Puff']];
 var ua=navigator.userAgent, ios=/iPhone|iPad|iPod/.test(ua), android=/Android/.test(ua), base=location.origin+'/lab/ar/';
@@ -27,7 +27,7 @@ document.getElementById('looks').innerHTML=looks.map(function(l){
   var k=l[0], usdz=base+k+'.usdz', glb=base+k+'.glb';
   var href=ios?usdz:'intent://arvr.google.com/scene-viewer/1.0?file='+encodeURIComponent(glb)+'&mode=ar_preferred&title='+encodeURIComponent(l[1])+'#Intent;scheme=https;package=com.google.android.googlequicksearchbox;action=android.intent.action.VIEW;S.browser_fallback_url='+encodeURIComponent(location.href)+';end;';
   var rel=ios?' rel="ar"':'';
-  return '<div class="look"><a'+rel+' href="'+href+'"><img src="/lab/ar/'+k+'.webp" alt=""></a><div><b>'+l[1]+'</b><small>'+(ios?'AR Quick Look':android?'Scene Viewer':'Open on a phone to view in AR')+' · '+(k==='holly'?'1.9':k==='blush'?'1.6':'1.0')+' MB</small><br><a class="ar"'+rel+' href="'+href+'">View in your space</a></div></div>';
+  return '<div class="look"><a'+rel+' href="'+href+'"><img src="/lab/ar/'+k+'.webp" alt=""></a><div><b>'+l[1]+'</b><small>'+(ios?'AR Quick Look':android?'Scene Viewer':'Open on a phone to view in AR')+' · '+(k==='holly'?'2.1':k==='blush'?'1.8':'1.2')+' MB</small><br><a class="ar"'+rel+' href="'+href+'">View in your space</a></div></div>';
 }).join('');
 </script>
 </body>

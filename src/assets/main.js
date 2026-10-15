@@ -5,6 +5,9 @@ var $=function(id){ return document.getElementById(id); };
 var SS=window.SS||{}, RM=SS.RM;
 var NAMES={blush:'Blush Puff',holly:'Holly Bow',oat:'Oat Puff',kitty:'Cocoa Kitty',butter:'Butter Wave',pearl:'Pearl Bobbin'};
 var FIN={cloud:'Cloud',aluminum:'Aluminum',graphite:'Graphite'};
+/* the base finish each set is photographed with; the 3D matches it */
+var SETFIN={blush:'cloud',holly:'aluminum',oat:'graphite'};
+var FINMAT={cloud:{color:'#F3F1EE',m:0,r:0.32,cc:0.9,env:0.9},aluminum:{color:'#D3D4D7',m:0.95,r:0.28,cc:0,env:1.6},graphite:{color:'#2C2C30',m:0.8,r:0.4,cc:0,env:1.3}};
 var PRICE={blush:'<b>$32</b> cover · <b>$49</b> base · <b>$72</b> the set',holly:'<b>$36</b> cover · <b>$49</b> base · <b>$76</b> the set',oat:'<b>$32</b> cover · <b>$49</b> base · <b>$72</b> the set'};
 
 /* ---------- FAQ: animated open and close ---------- */
@@ -103,12 +106,12 @@ if(stage){
     var scene=SV.makeScene(renderer), camera=new THREE.PerspectiveCamera(20,1,10,9000);
     scene.traverse(function(l){ if(l.isDirectionalLight&&l.shadow) l.shadow.mapSize.set(1024,1024); });
     var rad=THREE.MathUtils.degToRad;
-    /* the same framing as the studio photos, so the model lands where the photo's frame was */
-    var V={ty:82,tz:0,H:132,W:126,theta:0.38,phi:1.36};
+    /* the same framing as the studio set photos, so the model lands where the photo's pieces are */
+    var V={ty:70,tz:6,H:134,W:172,theta:0.32,phi:1.3};
     var orbit={theta:V.theta,phi:V.phi};
     var cache={}, cur=null, anim=null, dirty=true;
-    var model=function(n){ if(!cache[n]){ var L=SV.LOOKS[n], inner=SV.buildFrame(L,{openBack:true});
-        inner.rotation.x=-rad(12); inner.position.y=84*Math.cos(rad(12))+SV.TR*Math.sin(rad(12))+0.5;
+    var model=function(n){ if(!cache[n]){ var L=SV.LOOKS[n], inner=SV.kit(L,{sweaterX:72,sweaterZ:-70,baseX:-78,baseZ:54});
+        var f=FINMAT[SETFIN[n]], bm=inner.userData.ringMat; if(f&&bm){ bm.color=SV.lin(f.color); bm.metalness=f.m; bm.roughness=f.r; bm.clearcoat=f.cc; bm.envMapIntensity=f.env; bm.needsUpdate=true; }
         var wrap=new THREE.Group(); wrap.add(inner); wrap.position.y=-V.ty; var g=new THREE.Group(); g.add(wrap); g.position.y=V.ty; cache[n]=g; } return cache[n]; };
     var easeOutBack=function(k){ var c1=1.5,c3=c1+1; return 1+c3*Math.pow(k-1,3)+c1*Math.pow(k-1,2); };
     var reset=function(o){ o.scale.setScalar(1); o.rotation.y=0; o.position.y=V.ty; };
@@ -125,7 +128,7 @@ if(stage){
       var k2=Math.min(1,(t-OUT)/IN); a.next.scale.setScalar(0.72+0.28*easeOutBack(k2)); a.next.rotation.y=-0.6*(1-Math.pow(1-k2,3));
       if(k2>=1){ reset(a.next); anim=null; }
     };
-    var place=function(){ var t=Math.tan(rad(camera.fov/2)), r=Math.max(V.H/t,V.W/(camera.aspect*t))*0.98, s=Math.sin(orbit.phi);
+    var place=function(){ var t=Math.tan(rad(camera.fov/2)), r=Math.max(V.H/t,V.W/(camera.aspect*t))*1.1, s=Math.sin(orbit.phi);
       camera.position.set(r*s*Math.sin(orbit.theta),V.ty+r*Math.cos(orbit.phi),V.tz+r*s*Math.cos(orbit.theta)); camera.lookAt(0,V.ty,V.tz); };
     var resize=function(){ var w=Math.max(1,stage.clientWidth), h=Math.max(1,stage.clientHeight); renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); dirty=true; };
     if(window.ResizeObserver) new ResizeObserver(resize).observe(stage); else window.addEventListener('resize',resize);

@@ -92,16 +92,12 @@ var CH={
   ornament:function(){ var g=new T.Group(); var b=new T.Mesh(new T.SphereGeometry(8,24,16),pmat('#f3e9ee',{r:0.15,cc:1,ccr:0.05,env:1.4})); b.position.y=-12; g.add(b); var c=new T.Mesh(new T.CylinderGeometry(2.6,2.6,3,16),pmat('#d3b06a',{r:0.32,m:0.75,env:1.1})); c.position.y=-3.5; g.add(c); return sh(g); }
 };
 function buildSweater(L){
-  var R=42.1, th=1.8, h=25, capH=38.2, G=new T.Group(), col=L.sleeveColor||L.color, tx=L.sleeve, mat;
-  if(tx==='rib') mat=pmat(col,{r:0.88,env:0.45,bump:TEX.rib([22,2.2]),bs:1.2,sheen:col});
-  else if(tx==='boucle') mat=pmat(col,{r:0.95,env:0.4,bump:TEX.boucle([10,1.2]),bs:1.6,sheen:col});
-  else if(tx==='quilt') mat=pmat(col,{r:0.7,env:0.55,bump:TEX.quilt([6,0.7]),bs:2.2,sheen:col});
-  else if(tx==='eyelet'){ var cmap=TEX.eyeletColor(col,L.holeColor||'#d8cfbf',[9,1]); cmap.encoding=T.sRGBEncoding; mat=pmat('#ffffff',{r:0.85,env:0.45,map:cmap,bump:TEX.eyeletBump([9,1]),bs:1.0,sheen:col}); }
-  else mat=pmat(col,{r:0.78,env:0.5,bump:TEX.soft([6,1]),bs:0.25});
+  /* the sweater is cast silicone like the frame: a sleeve for the body with a domed cap and a rolled lip */
+  var R=42.1, th=1.8, h=25, capH=38.2, G=new T.Group(), col=L.sleeveColor||L.color;
+  var mat=pmat(col,{r:0.72,env:0.55,bump:TEX.soft([3,3]),bs:0.2});
   var cyl=new T.Mesh(new T.CylinderGeometry(R+th,R+th,h,72,1,true),mat); cyl.position.y=h/2; cyl.material.side=T.DoubleSide; G.add(cyl);
-  var dm=mat.clone(); ['bumpMap','map'].forEach(function(k){ if(mat[k]){ dm[k]=mat[k].clone(); dm[k].needsUpdate=true; dm[k].repeat.set(mat[k].repeat.x,mat[k].repeat.y*1.6); } });
-  var dome=new T.Mesh(new T.SphereGeometry(R+th,72,28,0,Math.PI*2,0,Math.PI/2),dm); dome.position.y=h; dome.scale.y=(capH+th)/(R+th); G.add(dome);
-  var cuff=new T.Mesh(new T.TorusGeometry(R+th+0.4,2.6,12,96),tx==='eyelet'?pmat(col,{r:0.85,env:0.45,sheen:col}):mat); cuff.rotation.x=Math.PI/2; cuff.position.y=2.4; G.add(cuff);
+  var dome=new T.Mesh(new T.SphereGeometry(R+th,72,28,0,Math.PI*2,0,Math.PI/2),mat); dome.position.y=h; dome.scale.y=(capH+th)/(R+th); G.add(dome);
+  var cuff=new T.Mesh(new T.TorusGeometry(R+th+0.4,2.6,12,96),mat); cuff.rotation.x=Math.PI/2; cuff.position.y=2.4; G.add(cuff);
   return sh(G); }
 function buildBase(L){
   var col=L.baseColor, mat=pmat(col,{r:0.3,cc:0.9,ccr:0.25,env:0.9}), G=new T.Group();
