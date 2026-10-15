@@ -9,7 +9,7 @@ var FIN={cloud:'Cloud',aluminum:'Aluminum',graphite:'Graphite'};
 var SETFIN={blush:'cloud',holly:'aluminum',oat:'graphite'};
 var FINMAT={cloud:{color:'#F3F1EE',m:0,r:0.32,cc:0.9,env:0.9},aluminum:{color:'#D3D4D7',m:0.95,r:0.28,cc:0,env:1.6},graphite:{color:'#2C2C30',m:0.8,r:0.4,cc:0,env:1.3}};
 /* one price for every launch set; the set is the offer, single pieces are there for people who only want one */
-var SETPRICE='<b>$49</b> the set, free shipping · cover or base alone $34', PRICE={blush:SETPRICE,holly:SETPRICE,oat:SETPRICE};
+var SETPRICE='<b>$49</b> the set · free shipping<br><span>Cover or base alone $34</span>', PRICE={blush:SETPRICE,holly:SETPRICE,oat:SETPRICE};
 
 /* ---------- FAQ: animated open and close ---------- */
 var faq=$('faqwrap');

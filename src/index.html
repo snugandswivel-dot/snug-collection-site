@@ -66,7 +66,7 @@
 .dot[aria-pressed="true"]{box-shadow:0 0 0 2px #fff,0 0 0 3.5px var(--ink);transform:scale(1.12)}
 .dot span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .pname{font-weight:500;min-height:1.5em}
-.prices{color:var(--muted)}.prices b{color:var(--ink);font-weight:700}
+.prices{color:var(--ink);font-size:18px;font-weight:500;line-height:1.4}.prices b{font-weight:700;font-size:22px}.prices span{color:var(--muted);font-size:15px;font-weight:400}
 .cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:8px}
 
 /* all nine covers at a glance, then each group */
@@ -87,7 +87,8 @@
 .strip>div{flex:0 0 78%;scroll-snap-align:start}
 }
 /* the set price line and the fit facts */
-.setline{margin-top:26px;font-size:17px}.setline b{font-weight:700}
+.row3 .price{margin-top:3px;font-size:15px;color:var(--muted)}.row3 .price b{display:inline;margin:0;font-size:18px;color:var(--ink)}.row3 .price.vote{font-style:italic}
+.tiles .tp{font-size:12.5px;font-weight:700;color:var(--muted)}
 .fitblock{margin-top:56px}.fitblock h2{font-size:clamp(26px,4vw,40px)}
 /* the swivel base facts */
 .facts{display:grid;gap:12px;max-width:52ch;margin:24px auto 0;color:var(--muted)}
@@ -160,7 +161,7 @@
 <button class="dot" type="button" style="--c:#E3D6C3" data-look="oat" aria-pressed="false"><span>Oat Puff</span></button>
 </div>
 <p class="pname" id="pname">Blush Puff</p>
-<p class="prices" id="prices"><b>$49</b> the set, free shipping · cover or base alone $34</p>
+<p class="prices" id="prices"><b>$49</b> the set · free shipping<br><span>Cover or base alone $34</span></p>
 <div class="cta"><a class="btn" href="#waitlist">Join the waitlist</a><a class="btn ghost" href="#covers">See all nine covers</a></div>
 <p class="note">Renderings of our own designs. Real photos once we test on real units in November.</p>
 </section></div>
@@ -170,43 +171,41 @@
 <p class="lede" style="margin-top:12px">A cover is a silicone frame for the screen and a matching silicone sweater for the back. Tap one to see it.</p>
 <nav class="lineup" aria-label="All nine covers">
 <div class="grp"><p class="gl"><b>Ships first</b> · $49 set</p><div class="tiles">
-<a href="#look-blush"><img src="{{A:img/tile-blush.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Blush Puff</a>
-<a href="#look-holly"><img src="{{A:img/tile-holly.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Holly Bow</a>
-<a href="#look-oat"><img src="{{A:img/tile-oat.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Oat Puff</a>
+<a href="#look-blush"><img src="{{A:img/tile-blush.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Blush Puff</span><span class="tp">$49</span></a>
+<a href="#look-holly"><img src="{{A:img/tile-holly.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Holly Bow</span><span class="tp">$49</span></a>
+<a href="#look-oat"><img src="{{A:img/tile-oat.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Oat Puff</span><span class="tp">$49</span></a>
 </div></div>
 <div class="grp"><p class="gl"><b>Real wood</b> · $59 set</p><div class="tiles">
-<a href="#look-oak"><img src="{{A:img/tile-oak.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Oak &amp; Oat</a>
-<a href="#look-walnut"><img src="{{A:img/tile-walnut.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Walnut &amp; Cocoa</a>
-<a href="#look-maple"><img src="{{A:img/tile-maple.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Maple &amp; Sage</a>
+<a href="#look-oak"><img src="{{A:img/tile-oak.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Oak &amp; Oat</span><span class="tp">$59</span></a>
+<a href="#look-walnut"><img src="{{A:img/tile-walnut.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Walnut &amp; Cocoa</span><span class="tp">$59</span></a>
+<a href="#look-maple"><img src="{{A:img/tile-maple.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Maple &amp; Sage</span><span class="tp">$59</span></a>
 </div></div>
 <div class="grp"><p class="gl"><b>On the ballot</b> · vote for next</p><div class="tiles">
-<a href="#look-kitty"><img src="{{A:img/tile-kitty.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Cocoa Kitty</a>
-<a href="#look-butter"><img src="{{A:img/tile-butter.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Butter Wave</a>
-<a href="#look-pearl"><img src="{{A:img/tile-pearl.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async">Pearl Bobbin</a>
+<a href="#look-kitty"><img src="{{A:img/tile-kitty.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Cocoa Kitty</span><span class="tp">Vote</span></a>
+<a href="#look-butter"><img src="{{A:img/tile-butter.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Butter Wave</span><span class="tp">Vote</span></a>
+<a href="#look-pearl"><img src="{{A:img/tile-pearl.webp}}" width="320" height="320" alt="" loading="lazy" decoding="async"><span>Pearl Bobbin</span><span class="tp">Vote</span></a>
 </div></div>
 </nav>
 
 <div class="ghead" id="launch"><h3>Ships first</h3><p>Vote for the one we make first. Every set is <b>$49</b> with free shipping: frame, sweater and base.</p></div>
 <div class="row3 strip">
-<div id="look-blush"><img src="{{A:img/set-blush-640.webp}}" width="640" height="640" alt="The Blush Puff set: a pink silicone frame, a pink sweater and a Cloud base" loading="lazy" decoding="async"><b>Blush Puff</b><small>A puffy pink frame, a pink sweater, and a pearl strand and heart charm. Set with a Cloud base.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-pick="blush">Vote for Blush Puff</a></div></div>
-<div id="look-holly"><img src="{{A:img/set-holly-640.webp}}" width="640" height="640" alt="The Holly Bow set: a cranberry frame with an ivory bow, an ivory sweater and an Aluminum base" loading="lazy" decoding="async"><b>Holly Bow</b><small>A cranberry frame and an ivory sweater. The bow clips off after the holidays. Set with an Aluminum base.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-pick="holly">Vote for Holly Bow</a></div></div>
-<div id="look-oat"><img src="{{A:img/set-oat-640.webp}}" width="640" height="640" alt="The Oat Puff set: a cream frame, a cream sweater and a Graphite base" loading="lazy" decoding="async"><b>Oat Puff</b><small>A cream frame and a cream sweater. The quiet one. Set with a Graphite base.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-pick="oat">Vote for Oat Puff</a></div></div>
+<div id="look-blush"><img src="{{A:img/set-blush-640.webp}}" width="640" height="640" alt="The Blush Puff set: a pink silicone frame, a pink sweater and a Cloud base" loading="lazy" decoding="async"><b>Blush Puff</b><p class="price"><b>$49</b> set <span>· cover only $34</span></p><small>A puffy pink frame, a pink sweater, and a pearl strand and heart charm. Set with a Cloud base.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-pick="blush">Vote for Blush Puff</a></div></div>
+<div id="look-holly"><img src="{{A:img/set-holly-640.webp}}" width="640" height="640" alt="The Holly Bow set: a cranberry frame with an ivory bow, an ivory sweater and an Aluminum base" loading="lazy" decoding="async"><b>Holly Bow</b><p class="price"><b>$49</b> set <span>· cover only $34</span></p><small>A cranberry frame and an ivory sweater. The bow clips off after the holidays. Set with an Aluminum base.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-pick="holly">Vote for Holly Bow</a></div></div>
+<div id="look-oat"><img src="{{A:img/set-oat-640.webp}}" width="640" height="640" alt="The Oat Puff set: a cream frame, a cream sweater and a Graphite base" loading="lazy" decoding="async"><b>Oat Puff</b><p class="price"><b>$49</b> set <span>· cover only $34</span></p><small>A cream frame and a cream sweater. The quiet one. Set with a Graphite base.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-pick="oat">Vote for Oat Puff</a></div></div>
 </div>
-<p class="setline">The cover alone (frame and sweater) is $34.</p>
 
 <div class="ghead" id="wood"><h3>Real wood on the outside</h3><p>A 3 mm face of real oak, walnut or maple set into a silicone frame, so it slips on like the soft covers. The base is topped in the same wood. In development: we prototype these after we measure real units.</p></div>
 <div class="row3 strip">
-<div id="look-oak"><img src="{{A:img/look-oak-640.webp}}" width="640" height="640" alt="Oak &amp; Oat: an oak-faced frame with an oat silicone rim, an oat sweater and an oak base" loading="lazy" decoding="async"><b>Oak &amp; Oat</b><small>White oak on oat silicone, with an oak base. Light and warm.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="oak">Vote for Oak &amp; Oat</a></div></div>
-<div id="look-walnut"><img src="{{A:img/look-walnut-640.webp}}" width="640" height="640" alt="Walnut &amp; Cocoa: a walnut-faced frame with a cocoa silicone rim, a cocoa sweater and a walnut base" loading="lazy" decoding="async"><b>Walnut &amp; Cocoa</b><small>American walnut on cocoa silicone. For darker kitchens.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="walnut">Vote for Walnut &amp; Cocoa</a></div></div>
-<div id="look-maple"><img src="{{A:img/look-maple-640.webp}}" width="640" height="640" alt="Maple &amp; Sage: a maple-faced frame with a sage silicone rim, a sage sweater and a maple base" loading="lazy" decoding="async"><b>Maple &amp; Sage</b><small>Pale maple on sage silicone. A cottage kitchen in one piece.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="maple">Vote for Maple &amp; Sage</a></div></div>
+<div id="look-oak"><img src="{{A:img/look-oak-640.webp}}" width="640" height="640" alt="Oak &amp; Oat: an oak-faced frame with an oat silicone rim, an oat sweater and an oak base" loading="lazy" decoding="async"><b>Oak &amp; Oat</b><p class="price"><b>$59</b> set <span>· cover only $44</span></p><small>White oak on oat silicone, with an oak base. Light and warm.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="oak">Vote for Oak &amp; Oat</a></div></div>
+<div id="look-walnut"><img src="{{A:img/look-walnut-640.webp}}" width="640" height="640" alt="Walnut &amp; Cocoa: a walnut-faced frame with a cocoa silicone rim, a cocoa sweater and a walnut base" loading="lazy" decoding="async"><b>Walnut &amp; Cocoa</b><p class="price"><b>$59</b> set <span>· cover only $44</span></p><small>American walnut on cocoa silicone. For darker kitchens.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="walnut">Vote for Walnut &amp; Cocoa</a></div></div>
+<div id="look-maple"><img src="{{A:img/look-maple-640.webp}}" width="640" height="640" alt="Maple &amp; Sage: a maple-faced frame with a sage silicone rim, a sage sweater and a maple base" loading="lazy" decoding="async"><b>Maple &amp; Sage</b><p class="price"><b>$59</b> set <span>· cover only $44</span></p><small>Pale maple on sage silicone. A cottage kitchen in one piece.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="maple">Vote for Maple &amp; Sage</a></div></div>
 </div>
-<p class="setline">Wood sets are <b>$59</b> with free shipping. A wood cover on its own is $44.</p>
 
 <div class="ghead" id="next"><h3>On the ballot</h3><p>Three more soft looks. They're up against the wood looks, and the one with the most votes is the next one we make.</p></div>
 <div class="row3 strip">
-<div id="look-kitty"><img src="{{A:img/photo-kitty-640.webp}}" width="640" height="640" alt="Cocoa Kitty: a cocoa cloud-edged frame with cat ears" loading="lazy" decoding="async"><b>Cocoa Kitty</b><small>Cat ears and a cloud edge turn the screen into a character.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="kitty">Vote for Cocoa Kitty</a></div></div>
-<div id="look-butter"><img src="{{A:img/photo-butter-640.webp}}" width="640" height="640" alt="Butter Wave: a butter-yellow wave-edged frame" loading="lazy" decoding="async"><b>Butter Wave</b><small>Butter yellow on a wavy edge, with a daisy and pearls on the corner.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="butter">Vote for Butter Wave</a></div></div>
-<div id="look-pearl"><img src="{{A:img/photo-pearl-640.webp}}" width="640" height="640" alt="Pearl Bobbin: a cream frame ringed with pearl beads" loading="lazy" decoding="async"><b>Pearl Bobbin</b><small>Pearl beads ring the frame, so it ships already accessorized.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="pearl">Vote for Pearl Bobbin</a></div></div>
+<div id="look-kitty"><img src="{{A:img/photo-kitty-640.webp}}" width="640" height="640" alt="Cocoa Kitty: a cocoa cloud-edged frame with cat ears" loading="lazy" decoding="async"><b>Cocoa Kitty</b><p class="price vote">Not made yet. Vote to make it.</p><small>Cat ears and a cloud edge turn the screen into a character.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="kitty">Vote for Cocoa Kitty</a></div></div>
+<div id="look-butter"><img src="{{A:img/photo-butter-640.webp}}" width="640" height="640" alt="Butter Wave: a butter-yellow wave-edged frame" loading="lazy" decoding="async"><b>Butter Wave</b><p class="price vote">Not made yet. Vote to make it.</p><small>Butter yellow on a wavy edge, with a daisy and pearls on the corner.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="butter">Vote for Butter Wave</a></div></div>
+<div id="look-pearl"><img src="{{A:img/photo-pearl-640.webp}}" width="640" height="640" alt="Pearl Bobbin: a cream frame ringed with pearl beads" loading="lazy" decoding="async"><b>Pearl Bobbin</b><p class="price vote">Not made yet. Vote to make it.</p><small>Pearl beads ring the frame, so it ships already accessorized.</small><div class="act"><a class="btn ghost small" href="#waitlist" data-next="pearl">Vote for Pearl Bobbin</a></div></div>
 </div>
 <div class="cta" style="margin-top:32px"><a class="btn ghost" href="/collection/">Spin all nine in 3D</a></div>
 <p class="note" style="margin-top:14px">Planned prices. Images are renderings of our own designs; the finished product may vary. No Apple product is shown.</p>
@@ -216,9 +215,9 @@
 <h2>The base. Three finishes.</h2>
 <p class="lede" style="margin-top:12px">A slim swivel ring the HomeView sits in, so it turns toward the stove, the sink or the table with one finger. Aluminum pairs with a Silver HomeView; Cloud and Graphite match the room.</p>
 <div class="row3 strip">
-<div><img src="{{A:img/base-cloud.webp}}" width="1200" height="1200" alt="The swivel base in Cloud, a matte white finish" loading="lazy" decoding="async"><b>Cloud</b><small>$34 alone, or in any $49 set</small></div>
-<div><img src="{{A:img/base-aluminum.webp}}" width="1200" height="1200" alt="The swivel base in brushed Aluminum" loading="lazy" decoding="async"><b>Aluminum</b><small>$34 alone, or in any $49 set</small></div>
-<div><img src="{{A:img/base-graphite.webp}}" width="1200" height="1200" alt="The swivel base in Graphite, a dark matte finish" loading="lazy" decoding="async"><b>Graphite</b><small>$34 alone, or in any $49 set</small></div>
+<div><img src="{{A:img/base-cloud.webp}}" width="1200" height="1200" alt="The swivel base in Cloud, a matte white finish" loading="lazy" decoding="async"><b>Cloud</b><p class="price"><b>$34</b> alone <span>· included in every set</span></p></div>
+<div><img src="{{A:img/base-aluminum.webp}}" width="1200" height="1200" alt="The swivel base in brushed Aluminum" loading="lazy" decoding="async"><b>Aluminum</b><p class="price"><b>$34</b> alone <span>· included in every set</span></p></div>
+<div><img src="{{A:img/base-graphite.webp}}" width="1200" height="1200" alt="The swivel base in Graphite, a dark matte finish" loading="lazy" decoding="async"><b>Graphite</b><p class="price"><b>$34</b> alone <span>· included in every set</span></p></div>
 </div>
 <div class="facts">
 <p><b>Designed to stop at 170° each way</b> so the power cable never wraps.</p>
