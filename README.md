@@ -1,6 +1,6 @@
 # The Snug Collection — website
 
-Static site for snugcollection.com, hosted on Cloudflare Pages.
+Static site for thesnugcollection.com, hosted on Cloudflare Pages.
 
 ## Build
 
